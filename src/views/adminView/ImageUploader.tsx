@@ -1,6 +1,7 @@
+// src/components/ImageUploader.tsx
 import { Close, Task } from '@mui/icons-material';
 import Upload from '@mui/icons-material/Upload';
-import { Box, Button, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Props {
@@ -70,19 +71,28 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
         }
     };
 
+    const handleClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
     return (
         <>
             {uploadStatus === 'success' ? (
-                <Paper elevation={3} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', borderRadius: '8px' }}>
+                <Paper elevation={3} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px', borderRadius: '8px' }}>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <Task color='primary' />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontWeight: 600, fontSize: '14px', lineHeight: '21px', color: '#59bef8' }}>
-                                {fileName}
-                            </span>
-                            <span style={{ fontSize: '12px', fontFamily: 'Poppins', fontWeight: 400, lineHeight: '18px' }}>
-                                Archivo cargado exitosamente
-                            </span>
+                            <span
+                                style={{
+                                    fontWeight: 600,
+                                    fontSize: '14px',
+                                    lineHeight: '21px',
+                                    color: '#59bef8',
+                                }}
+                            >{fileName}</span>
+
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
@@ -95,7 +105,7 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
                 <Box
                     display="flex"
                     alignItems="center"
-                    border="1px dashed grey"
+                    border="1px dashed #a4d9fa"
                     borderRadius={2}
                     justifyContent="space-between"
                     p={1}
@@ -103,18 +113,22 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
                     onDragEnter={handleDragEnter}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    style={{ backgroundColor: isDragging ? '#f0f0f0' : 'transparent' }}
+                    onClick={handleClick}
+                    style={{ backgroundColor: isDragging ? '#f0f0f0' : 'transparent', cursor: 'pointer' }}
                 >
+                    <input
+                        type="file"
+                        accept=".jpg,.png,.pdf"
+                        hidden
+                        onChange={handleFileInputChange}
+                        ref={fileInputRef}
+                    />
                     {uploadStatus === 'idle' && (
                         <>
                             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                 <Upload color='primary' />
-                                <Typography>Arrastra el archivo o haz click para cargar</Typography>
+                                <Typography variant='body2'>Arrastra el archivo o haz click para cargar</Typography>
                             </div>
-                            <Button variant="text" component="label" sx={{ borderRadius: '15px', textTransform: 'none' }}>
-                                Subir Archivo
-                                <input type="file" accept=".jpg,.png,.pdf" hidden onChange={handleFileInputChange} ref={fileInputRef} />
-                            </Button>
                         </>
                     )}
                     {uploadStatus === 'loading' && (
