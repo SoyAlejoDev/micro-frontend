@@ -73,15 +73,11 @@ export const MainDrawer = () => {
     const [open, setOpen] = React.useState(false);
     const [selectedMenu, setSelectedMenu] = React.useState<string>("Inicio");
 
-    const { socket, socketData, online } = useSocketStore();
+    const { socketData, online } = useSocketStore();
 
-    socket?.emit('evento-front', {
-        nombre: 'Rolando',
-        edad: 25
-    });
-
-
-    const seccionesMenu = ['Inicio', 'Entrantes', 'Bebidas', 'Comidas', 'Agregados', 'Pizzas', 'Postres'];
+    //? Sacar del menu el arreglo de secciones del menu
+    const seccionesMenu = socketData?.new_data_menu?.map(item => item.nombre) ?? [];
+    seccionesMenu.unshift("Inicio");
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -173,7 +169,6 @@ export const MainDrawer = () => {
                         <DrawerHeader />
 
                         <RenderContent
-                            seccionesMenu={seccionesMenu}
                             selectedMenu={selectedMenu}
                             socketData={socketData}
                         />

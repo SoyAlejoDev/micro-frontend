@@ -13,12 +13,11 @@ import { Agregados } from './menu/agregados/Agregados ';
 interface Props {
     selectedMenu: string;
     socketData: Data | null;
-    seccionesMenu: string[];
 }
 
-export const RenderContent = ({ seccionesMenu, selectedMenu, socketData }: Props) => {
+export const RenderContent = ({ selectedMenu, socketData }: Props) => {
     switch (selectedMenu) {
-        case seccionesMenu[0]:
+        case "Inicio":
             return (
                 <>
                     <MainMenu socketData={socketData} />
@@ -27,17 +26,17 @@ export const RenderContent = ({ seccionesMenu, selectedMenu, socketData }: Props
                     <Footer socketData={socketData} />
                 </>
             );
-        case seccionesMenu[1]:
+        case "Entrantes":
             return <Entrantes />;
-        case seccionesMenu[2]:
+        case "Bebidas":
             return <Bebidas />;
-        case seccionesMenu[3]:
+        case "Comidas":
             return <Comidas />;
-        case seccionesMenu[4]:
+        case "Agregados":
             return <Agregados />;
-        case seccionesMenu[5]:
+        case "Pizzas":
             return <Pizzas />;
-        case seccionesMenu[6]:
+        case "Postres":
             return <Postres />;
         default:
             return (

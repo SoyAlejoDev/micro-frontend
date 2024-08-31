@@ -9,6 +9,22 @@ export interface Data {
 	menu: Menu;
 	mesas: MesasArray[];
 	cocina: Datos;
+	new_data_menu: NewDataMenu[];
+}
+
+export interface NewDataMenu {
+	id: string;
+	nombre: string;
+	items: Items[];
+}
+
+export interface Items {
+	id: string;
+	nombre: string;
+	descripcion: string;
+	precio: number;
+	foto: string;
+	habilitado: boolean;
 }
 
 interface Menu {
