@@ -3,12 +3,7 @@ import { Characteristics } from './characteristics/Characteristics';
 import { Footer } from './Footer';
 import { History } from './History';
 import { MainMenu } from './MainMenu';
-import { Bebidas } from './menu/bebidas/Bebidas';
-import { Comidas } from './menu/comidas/Comidas';
-import { Entrantes } from './menu/entrantes/Entrantes';
-import { Pizzas } from './menu/pizzas/Pizzas';
-import { Postres } from './menu/postres/Postres';
-import { Agregados } from './menu/agregados/Agregados ';
+import { MenuItem } from './menu/menuItem/MenuItem';
 
 interface Props {
     selectedMenu: string;
@@ -27,17 +22,17 @@ export const RenderContent = ({ selectedMenu, socketData }: Props) => {
                 </>
             );
         case "Entrantes":
-            return <Entrantes />;
+            return <MenuItem seccion='Entrantes' />;
         case "Bebidas":
-            return <Bebidas />;
+            return <MenuItem seccion='Bebidas' />;
         case "Comidas":
-            return <Comidas />;
+            return <MenuItem seccion='Comidas' />;
         case "Agregados":
-            return <Agregados />;
+            return <MenuItem seccion='Agregados' />;
         case "Pizzas":
-            return <Pizzas />;
+            return <MenuItem seccion='Pizzas' />;
         case "Postres":
-            return <Postres />;
+            return <MenuItem seccion='Postres' />;
         default:
             return (
                 <>
