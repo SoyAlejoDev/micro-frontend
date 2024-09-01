@@ -1,5 +1,5 @@
 import { useSocketStore } from "../../../../store/useSocketStore";
-import { Card } from "../../../../ui/Card";
+import { Card } from "../card/Card";
 
 interface Props {
     seccion: string;

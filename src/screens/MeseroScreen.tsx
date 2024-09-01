@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
-import { MeseroForm } from '../components/form/MeseroForm';
 import { useSocketStore } from '../store/useSocketStore';
+import { MeseroForm } from '../components/auth/meseroForm/MeseroForm';
 
 
 

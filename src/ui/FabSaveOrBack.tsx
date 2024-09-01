@@ -24,7 +24,8 @@ export const FabSaveOrBack = ({ orderTable }: Props) => {
 
     const sendData = () => {
         const serializedData = JSON.stringify(orderTable);
-        socket.emit('saveOrder', serializedData);
+        console.log(orderTable);
+        socket.emit('saveOrder', orderTable);
     };
 
     const handleClick = (value: number) => {

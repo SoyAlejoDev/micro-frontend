@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { useSocketStore } from './store/useSocketStore';
-import { Cocina, Menu, Mesero } from './screens';
+import { AdminScreen, Cocina, Menu, Mesero } from './screens';
 import { Mesas } from './components/mesas/Mesas';
 import { MeseroContainer } from './views/meseroView/MeseroContainer';
-import { AdminScreen } from './screens/AdminScreen';
 
 function App() {
 
@@ -25,8 +24,8 @@ function App() {
         <Route path="/mesero" element={<Mesero />} />
         <Route path="/cocina" element={<Cocina />} />
         <Route path="/mesas" element={<Mesas />} />
-        <Route path="/admin" element={<AdminScreen />} />
         <Route path="/mesa/:id" element={<MeseroContainer />} />
+        <Route path="/admin" element={<AdminScreen />} />
         <Route path="*" element={<Navigate to="/menu" />} />
       </Routes>
     </Router>

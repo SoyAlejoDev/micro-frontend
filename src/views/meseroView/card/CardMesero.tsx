@@ -1,13 +1,13 @@
 import { Add, Remove } from "@mui/icons-material";
 import { IconButton, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Bebidas, PlatosPrincipales } from "../types";
-import { useSocketStore } from "../store/useSocketStore";
+import { useSocketStore } from "../../../store/useSocketStore";
+import { Items } from "../../../types";
 
 interface Props {
-    data: Bebidas | PlatosPrincipales | undefined;
-    selectedMenu?: string;
-    tableId: number; // Identificador de la mesa
+    data: Items;
+    selectedMenu: string;
+    tableId: number;
 }
 
 export const CardMesero = ({ data, selectedMenu, tableId }: Props) => {
@@ -22,7 +22,7 @@ export const CardMesero = ({ data, selectedMenu, tableId }: Props) => {
             const existingItem = orderForTable?.[selectedMenu]?.find(
                 (item) => item.id === data.id
             );
-            return existingItem ? existingItem.cantidad : 0;
+            return existingItem?.cantidad ?? 0;
         }
         return 0;
     });
@@ -51,15 +51,15 @@ export const CardMesero = ({ data, selectedMenu, tableId }: Props) => {
             <div className="justify-between flex">
                 <div className="flex">
                     <img
-                        src={data?.foto}
-                        alt={data?.descripcion}
+                        src={`data:${data.foto.split(',')[0]};base64,${data.foto.split(',')[1]}`}
+                        alt={data.descripcion}
                         className="h-full w-[80px] rounded-md mr-3"
                     />
                     <div className="flex flex-col justify-center">
                         <h3 className="w-full font-bold text-lg leading-tight">
-                            {data?.nombre}
+                            {data.nombre}
                         </h3>
-                        <span style={{ fontWeight: 100 }}> ${data?.precio}</span>
+                        <span style={{ fontWeight: 100 }}> ${data.precio}</span>
                     </div>
                 </div>
                 <div className="flex items-center">

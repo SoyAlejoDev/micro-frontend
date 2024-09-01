@@ -9,23 +9,18 @@ import { FabSaveOrBack } from '../../ui/FabSaveOrBack';
 
 
 export const MeseroContainer = () => {
-  const seccionesMenu = ['Entrantes', 'Bebidas', 'Comidas', 'Agregados', 'Pizzas', 'Postres'];
+
   const [selectedMenu, setSelectedMenu] = useState<string>("Entrantes");
-  const navigate = useNavigate();
-
-
   const [orderTable, setorderTable] = useState<Orden>();
-
+  const navigate = useNavigate();
+  const { online, ordersByTable, socketData } = useSocketStore();
   const { pathname } = useLocation();
+
 
   const tableId = pathname.split('/').slice(2).join('/');
 
 
-  const { online, ordersByTable, socketData, cocina } = useSocketStore();
-
-  setTimeout(() => {
-    console.log(cocina);
-  }, 10000);
+  const seccionesMenu = socketData?.new_data_menu?.map(item => item.nombre) ?? [];
 
   const handleMenuClick = (menu: string) => {
     setSelectedMenu(menu);
@@ -43,6 +38,7 @@ export const MeseroContainer = () => {
       const orders = ordersByTable[Number(tableId)];
       if (orders) {
         setorderTable({ mesa: Number(tableId), orders });
+        console.log(orderTable);
       }
     }
 
@@ -79,7 +75,7 @@ export const MeseroContainer = () => {
 
       <div className='w-full py-3 max-h-[70vh] overflow-auto'>
         <RenderContent
-          seccionesMenu={seccionesMenu}
+          seccion={selectedMenu}
           selectedMenu={selectedMenu}
           tableId={tableId}
         />

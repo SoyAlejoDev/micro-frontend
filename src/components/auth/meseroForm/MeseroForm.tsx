@@ -1,7 +1,7 @@
-import { Alert, Button, TextField } from '@mui/material';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useSocketStore } from '../../store/useSocketStore';
 import { Close } from '@mui/icons-material';
+import { Button, TextField } from '@mui/material';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useSocketStore } from '../../../store/useSocketStore';
 
 interface User {
     user: string;
@@ -13,6 +13,7 @@ export const MeseroForm = () => {
     const { socket, meseroLogin } = useSocketStore();
 
     const onSubmit: SubmitHandler<User> = data => {
+        console.log(data);
         socket?.emit('mesero-login', data);
     };
 

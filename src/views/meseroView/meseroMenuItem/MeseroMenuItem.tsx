@@ -1,29 +1,27 @@
-import { useSocketStore } from "../../../../store/useSocketStore";
-import { CardMesero } from "../../../../ui/CardMesero";
+import { useSocketStore } from "../../../store/useSocketStore";
+import { CardMesero } from "../card/CardMesero";
 
 interface Props {
     selectedMenu: string;
     tableId: string;
 }
 
-export const Pizzas = ({ selectedMenu, tableId }: Props) => {
-
+export const MeseroMenuItem = ({ selectedMenu, tableId }: Props) => {
     const { online, socketData } = useSocketStore();
 
     return (
         <div className="lg:flex lg:flex-wrap gap-3 justify-between">
             {
                 online && (
-                    socketData?.menu.pizzas?.map((item, index) => (
+                    socketData?.new_data_menu?.find(section => section.nombre === selectedMenu)?.items.map((item, index) => (
                         <CardMesero
-                            key={index}
+                            key={item.id}
                             data={item}
                             selectedMenu={selectedMenu}
                             tableId={Number(tableId)}
                         />
                     ))
                 )
-
             }
         </div>
     );
