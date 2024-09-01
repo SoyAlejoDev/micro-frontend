@@ -59,7 +59,7 @@ export const AdminStep = () => {
             >
                 <Typography>{steps[activeStep].label}</Typography>
             </Paper>
-            <Box sx={{ flexGrow: 1, maxWidth: 400, width: '100%', p: 2, overflowY: 'auto' }}>
+            <Box sx={{ flexGrow: 1, width: '100%', p: 2, overflowY: 'auto' }}>
                 {steps[activeStep].component}
             </Box>
             <MobileStepper

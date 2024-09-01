@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.13.0",
 		"@emotion/styled": "^11.13.0",
+		"@hookform/resolvers": "^3.9.0",
 		"@mui/icons-material": "^5.16.5",
 		"@mui/material": "^5.16.5",
 		"antd": "^5.19.4",
@@ -23,6 +24,7 @@
 		"sweetalert": "^2.1.2",
 		"sweetalert2": "^11.12.4",
 		"uuid": "^10.0.0",
+		"yup": "^1.4.0",
 		"zustand": "^4.5.4"
 	},
 	"devDependencies": {
