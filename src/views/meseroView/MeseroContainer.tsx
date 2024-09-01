@@ -83,7 +83,7 @@ export const MeseroContainer = () => {
 
       </div>
 
-      <div className='h-[35vh] w-full overflow-auto pb-20 lg:h-[55vh]'>
+      <div className='  w-full overflow-auto pb-20'>
         {
           orderTable?.mesa && Object.keys(ordersByTable).length !== 0 ? (
             <OrdenCard

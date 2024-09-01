@@ -6,7 +6,6 @@ export interface Data {
 	history: History;
 	characteristics: Characteristic[];
 	footer: Footer;
-	menu: Menu;
 	mesas: MesasArray[];
 	cocina: Datos;
 	new_data_menu: NewDataMenu[];
@@ -25,63 +24,6 @@ export interface Items {
 	precio: number;
 	foto: string;
 	habilitado: boolean;
-}
-
-interface Menu {
-	platosPrincipales: PlatosPrincipales[];
-	bebidas: Bebidas[];
-	pizzas: Pizzas[];
-	agregados: Agregados[];
-	entrantes: Entrantes[];
-	postres: Postres[];
-}
-
-export interface Postres {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
-}
-
-export interface Entrantes {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
-}
-
-export interface Agregados {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
-}
-
-export interface PlatosPrincipales {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
-}
-
-export interface Bebidas {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
-}
-
-interface Pizzas {
-	id: number;
-	nombre: string;
-	foto: string;
-	descripcion: string;
-	precio: number;
 }
 
 interface Main {
@@ -154,15 +96,6 @@ export type Orden = {
 	orders: Categorias;
 };
 
-type Categoria = {
-	Entrantes?: Producto[];
-	Bebidas?: Producto[];
-	Comidas?: Producto[];
-	Pizzas?: Producto[];
-	Postres?: Producto[];
-	Agregados?: Producto[];
-};
-
 export type Datos = {
-	[key: string]: Categoria;
+	[key: string]: Categorias;
 };

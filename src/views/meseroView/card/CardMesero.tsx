@@ -47,39 +47,45 @@ export const CardMesero = ({ data, selectedMenu, tableId }: Props) => {
     }, [count, data, selectedMenu, tableId, addToOrder, removeFromOrder]);
 
     return (
-        <Paper elevation={3} className="mb-2">
-            <div className="justify-between flex">
-                <div className="flex">
-                    <img
-                        src={`data:${data.foto.split(',')[0]};base64,${data.foto.split(',')[1]}`}
-                        alt={data.descripcion}
-                        className="h-full w-[80px] rounded-md mr-3"
-                    />
-                    <div className="flex flex-col justify-center">
-                        <h3 className="w-full font-bold text-lg leading-tight">
-                            {data.nombre}
-                        </h3>
-                        <span style={{ fontWeight: 100 }}> ${data.precio}</span>
-                    </div>
-                </div>
-                <div className="flex items-center">
-                    <IconButton
-                        color="error"
-                        size="large"
-                        onClick={() => handleClick(-1)}
-                    >
-                        <Remove />
-                    </IconButton>
-                    <Typography variant="h5">{count}</Typography>
-                    <IconButton
-                        color="success"
-                        size="large"
-                        onClick={() => handleClick(+1)}
-                    >
-                        <Add />
-                    </IconButton>
-                </div>
-            </div>
-        </Paper>
+        <>
+            {
+                data.habilitado && (
+                    <Paper elevation={3} className="mb-2">
+                        <div className="justify-between flex">
+                            <div className="flex">
+                                <img
+                                    src={`data:${data.foto.split(',')[0]};base64,${data.foto.split(',')[1]}`}
+                                    alt={data.descripcion}
+                                    className="h-full w-[80px] rounded-md mr-3"
+                                />
+                                <div className="flex flex-col justify-center">
+                                    <h3 className="w-full font-bold text-lg leading-tight">
+                                        {data.nombre}
+                                    </h3>
+                                    <span style={{ fontWeight: 100 }}> ${data.precio}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <IconButton
+                                    color="error"
+                                    size="large"
+                                    onClick={() => handleClick(-1)}
+                                >
+                                    <Remove />
+                                </IconButton>
+                                <Typography variant="h5">{count}</Typography>
+                                <IconButton
+                                    color="success"
+                                    size="large"
+                                    onClick={() => handleClick(+1)}
+                                >
+                                    <Add />
+                                </IconButton>
+                            </div>
+                        </div>
+                    </Paper>
+                )
+            }
+        </>
     );
 };
