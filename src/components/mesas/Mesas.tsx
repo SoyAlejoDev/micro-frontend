@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSocketStore } from '../../store/useSocketStore';
 import { MesasItems } from './MesasItems';
+import { Loading } from '../loading/Loading';
 
 export const Mesas = () => {
 
@@ -26,7 +27,7 @@ export const Mesas = () => {
     return (
         <>
             {!online ? (
-                <p>loading....</p>
+                <Loading />
             ) : (
                 <div className="bg-gray-900 min-h-screen flex items-center justify-center">
 

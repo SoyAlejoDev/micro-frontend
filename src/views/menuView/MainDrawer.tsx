@@ -18,6 +18,7 @@ import { useSocketStore } from '../../store/useSocketStore';
 import { RenderContent } from './RenderContent';
 import './styles.css';
 import { FABToScroll } from '../../ui/FABToScroll';
+import { Loading } from '../../components/loading/Loading';
 
 const drawerWidth = 240;
 
@@ -95,7 +96,7 @@ export const MainDrawer = () => {
     return (
         <>
             {!online ? (
-                <p>loading....</p>
+                <Loading />
             ) : (
                 <Box sx={{ display: 'flex' }}
 

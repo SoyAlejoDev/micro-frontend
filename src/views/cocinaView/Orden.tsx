@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Datos } from '../../types';
 import { OrderItems } from './OrderItems';
 import { useSocketStore } from '../../store/useSocketStore';
+import { Loading } from '../../components/loading/Loading';
 
 export const Orden = () => {
 
@@ -31,7 +32,7 @@ export const Orden = () => {
                             orders={orden || {} as Datos}
                         />
                     </section>)
-                    : (<p>Loading...</p>)
+                    : (<Loading />)
             }
         </>
 
