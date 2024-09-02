@@ -132,7 +132,7 @@ export const Menu: React.FC = () => {
     };
 
     return (
-        <div >
+        <div style={{ margin: '24px 16px' }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={10}>
                     <TextField
@@ -208,7 +208,6 @@ export const Menu: React.FC = () => {
                                                 label="Precio"
                                                 variant="outlined"
                                                 type="number"
-                                                // fullWidth
                                                 sx={{ maxWidth: '100px' }}
                                                 size='small'
                                                 value={item.precio}

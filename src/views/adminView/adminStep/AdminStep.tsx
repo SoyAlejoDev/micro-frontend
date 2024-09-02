@@ -1,34 +1,29 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
-import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import { Main } from './Main';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MobileStepper from '@mui/material/MobileStepper';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
 import { HCF } from './HCF';
-import { CantMesas } from './CantMesas';
+import { Main } from './Main';
 import { Menu } from './Menu';
 
 const steps = [
     {
-        label: 'Main Component',
-        component: <Main />,
+        label: `Formulario de Presentación`,
+        component: <Main />
+        ,
     },
     {
-        label: 'HCF Component',
+        label: 'Historia, Caracteristicas y Pie de Pagina',
         component: <HCF />,
     },
     {
         label: 'Menu Component',
         component: <Menu />,
     },
-    {
-        label: 'CantMesas Component',
-        component: <CantMesas />,
-    },
+
 ];
 
 export const AdminStep = () => {
@@ -45,21 +40,9 @@ export const AdminStep = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Paper
-                square
-                elevation={0}
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    height: 50,
-                    pl: 2,
-                    bgcolor: 'background.default',
-                }}
-            >
-                <Typography>{steps[activeStep].label}</Typography>
-            </Paper>
-            <Box sx={{ flexGrow: 1, width: '100%', p: 2, overflowY: 'auto' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+
+            <Box sx={{ flexGrow: 1, overflowY: 'auto', height: '100%' }}>
                 {steps[activeStep].component}
             </Box>
             <MobileStepper

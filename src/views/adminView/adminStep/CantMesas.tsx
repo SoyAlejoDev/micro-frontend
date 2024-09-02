@@ -35,27 +35,30 @@ export const CantMesas: React.FC = () => {
     };
 
     return (
-        <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-                Cantidad de Mesas
-            </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField
-                    fullWidth
-                    label="Cantidad de Mesas"
-                    variant="outlined"
-                    type="number"
-                    {...register('numberOfTables')}
-                    error={!!errors.numberOfTables}
-                    helperText={errors.numberOfTables?.message}
-                    margin="normal"
-                />
-                <Box sx={{ mt: 3 }}>
-                    <Button variant="contained" color="primary" type="submit" fullWidth>
-                        Generar Mesas
-                    </Button>
-                </Box>
-            </form>
-        </Paper>
+        <div className='flex justify-center items-center h-full'>
+            <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                    Cantidad de Mesas
+                </Typography>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <TextField
+                        fullWidth
+                        label="Cantidad de Mesas"
+                        variant="outlined"
+                        type="number"
+                        size='small'
+                        {...register('numberOfTables')}
+                        error={!!errors.numberOfTables}
+                        helperText={errors.numberOfTables?.message}
+                        margin="normal"
+                    />
+                    <Box sx={{ mt: 3 }}>
+                        <Button variant="contained" color="primary" type="submit" fullWidth>
+                            Generar Mesas
+                        </Button>
+                    </Box>
+                </form>
+            </Paper>
+        </div>
     );
 };

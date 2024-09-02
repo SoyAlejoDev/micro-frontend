@@ -1,51 +1,81 @@
-import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Help, Verified } from '@mui/icons-material';
+import { Box, Button, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import * as React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { Paper, TextField, Button, Typography, Box } from '@mui/material';
+import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
 
 interface IFormInput {
     title: string;
     description: string;
-    image: FileList | null;
+    imageBase64: string;
+    tablesCount: number;
 }
 
 const schema = yup.object({
     title: yup.string().required('El título es requerido'),
     description: yup.string().required('La descripción es requerida'),
-    image: yup
-        .mixed()
-        .test('fileRequired', 'La imagen es requerida', (value) => {
-            return value && value.length > 0;
-        }),
+    imageBase64: yup.string().required('La imagen es requerida'),
+    tablesCount: yup
+        .number()
+        .required('La cantidad de mesas es requerida')
+        .min(1, 'Debe haber al menos una mesa')
 }).required();
 
 export const Main: React.FC = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormInput>({
         resolver: yupResolver(schema),
+        defaultValues: {
+            tablesCount: 1,  // Valor por defecto para cantidad de mesas
+        },
     });
+    const [fileBase64, setFileBase64] = React.useState<string | null>(null);
 
     const onSubmit: SubmitHandler<IFormInput> = data => {
-        console.log(data);
-        // Aquí puedes manejar el envío del formulario, como enviarlo a una API
+        const tables = Array.from({ length: data.tablesCount }, (_, i) => ({
+            id: i + 1,
+            mesa: `Mesa ${i + 1}`,
+            bussy: false,
+        }));
+
+        const finalData = {
+            ...data,
+            mesas: tables,
+        };
+
+        console.log(finalData);
     };
+
+    React.useEffect(() => {
+        if (fileBase64) {
+            setValue('imageBase64', fileBase64);
+        }
+    }, [fileBase64, setValue]);
 
     return (
         <div className='flex justify-center items-center h-full'>
             <Paper elevation={3} sx={{ p: 4 }}>
                 <Typography variant="h6" gutterBottom>
-                    Formulario
+                    Presentacion
                 </Typography>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <TextField
-                        fullWidth
-                        label="Título"
-                        variant="outlined"
-                        {...register('title')}
-                        error={!!errors.title}
-                        helperText={errors.title?.message}
-                        margin="normal"
-                    />
+                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                        <TextField
+                            fullWidth
+                            label="Título"
+                            variant="outlined"
+                            {...register('title')}
+                            size='small'
+                            error={!!errors.title}
+                            helperText={errors.title?.message}
+                            margin="normal"
+                            autoComplete='none'
+                        />
+                        <Tooltip title="Ayuda" arrow placement="right-start">
+                            <Help htmlColor='gray' />
+                        </Tooltip>
+                    </div>
                     <TextField
                         fullWidth
                         label="Descripción"
@@ -57,27 +87,40 @@ export const Main: React.FC = () => {
                         multiline
                         rows={4}
                     />
-                    <Button
-                        variant="contained"
-                        component="label"
-                        sx={{ mt: 2 }}
-                    >
-                        Subir Imagen
-                        <input
-                            type="file"
-                            accept="image/*"
-                            hidden
-                            {...register('image')}
+                    <TextField
+                        fullWidth
+                        label="Cantidad de Mesas"
+                        variant="outlined"
+                        size='small'
+                        type="number"
+                        {...register('tablesCount')}
+                        error={!!errors.tablesCount}
+                        helperText={errors.tablesCount?.message}
+                        margin="normal"
+                        InputProps={{
+                            inputProps: {
+                                min: 1,
+                            },
+                        }}
+                    />
+
+                    <Box sx={{ mt: 2 }}>
+                        <ImageUploader
+                            setFileBase64={setFileBase64}
+                            fileBase64={fileBase64}
                         />
-                    </Button>
-                    {errors.image && (
-                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                            {errors.image.message}
-                        </Typography>
-                    )}
+                        {errors.imageBase64 && (
+                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                                {errors.imageBase64.message}
+                            </Typography>
+                        )}
+                    </Box>
+
                     <Box sx={{ mt: 3 }}>
-                        <Button variant="contained" color="primary" type="submit" fullWidth>
-                            Enviar
+                        <Button
+                            startIcon={<Verified />}
+                            variant="contained" color="primary" type="submit" fullWidth sx={{ textTransform: 'none' }}>
+                            Comprobar
                         </Button>
                     </Box>
                 </form>
