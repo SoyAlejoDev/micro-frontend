@@ -60,16 +60,19 @@ export const AdminStep = () => {
                     </Box>
                 ))}
             </Box>
-            <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '12px' }}>
-                <Button
-                    startIcon={<Send />}
-                    sx={{ width: '300px' }}
-                    variant='outlined'
-                    onClick={sendData}
-                >
-                    Enviar
-                </Button>
-            </div>
+
+            {activeStep === steps.length - 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '12px' }}>
+                    <Button
+                        startIcon={<Send />}
+                        sx={{ width: '300px' }}
+                        variant='outlined'
+                        onClick={sendData}
+                    >
+                        Enviar
+                    </Button>
+                </div>
+            )}
 
             <MobileStepper
                 style={{ backgroundColor: '#001529' }}
