@@ -1,9 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Add, Delete, Verified } from "@mui/icons-material";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, Paper, TextField, Typography } from "@mui/material";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { ImageUploader } from "../../../components/imageUploader/ImageUploader";
+import { useAdminStore } from "../../../store/useAdminStore";
 
 const descriptionSchema = yup.object({
     items: yup.array().of(
@@ -30,6 +31,8 @@ export const DescriptionForm: React.FC<{ onSubmit: SubmitHandler<DescriptionForm
         }
     });
 
+    const { descriptionFormData } = useAdminStore();
+
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'items',
@@ -40,8 +43,15 @@ export const DescriptionForm: React.FC<{ onSubmit: SubmitHandler<DescriptionForm
     };
 
     return (
-        <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
-            <Typography variant="h6">Formulario Características</Typography>
+        <div>
+            <Divider sx={{ marginY: "15px" }}>
+                <div className="flex items-center gap-3">
+                    <Typography variant="h6" sx={{ margin: 0 }}>Formulario Características</Typography>
+                    {
+                        descriptionFormData && <Verified color="success" />
+                    }
+                </div>
+            </Divider>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {fields.map((field, index) => (
                     <Box key={field.id} sx={{ mb: 2 }}>
@@ -83,35 +93,37 @@ export const DescriptionForm: React.FC<{ onSubmit: SubmitHandler<DescriptionForm
                         </Box>
                     </Box>
                 ))}
-                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                    <Button
-                        color="success"
-                        variant="outlined"
-                        onClick={() => append({ logo: null, item: '', text: '' })}
-                        sx={{ textTransform: 'none' }}
-                        startIcon={<Add />}
-                    >
-                        Añadir Item
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => remove(fields.length - 1)}
-                        sx={{ textTransform: 'none' }}
-                        startIcon={<Delete />}
-                        disabled={fields.length === 1}
-                    >
-                        Eliminar Último Item
-                    </Button>
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                    <Button
-                        startIcon={<Verified />}
-                        sx={{ textTransform: 'none' }} variant="contained" color="primary" type="submit" fullWidth>
-                        Comprobar
-                    </Button>
+                <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'space-between' }}>
+                    <div className="flex gap-3">
+                        <Button
+                            color="success"
+                            variant="outlined"
+                            onClick={() => append({ logo: null, item: '', text: '' })}
+                            sx={{ textTransform: 'none' }}
+                            startIcon={<Add />}
+                        >
+                            Añadir Item
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => remove(fields.length - 1)}
+                            sx={{ textTransform: 'none' }}
+                            startIcon={<Delete />}
+                            disabled={fields.length === 1}
+                        >
+                            Eliminar Último Item
+                        </Button>
+                    </div>
+                    <Box >
+                        <Button
+                            startIcon={<Verified />}
+                            sx={{ textTransform: 'none' }} variant="contained" color="primary" type="submit" fullWidth>
+                            Comprobar
+                        </Button>
+                    </Box>
                 </Box>
             </form>
-        </Paper>
+        </div>
     );
 };

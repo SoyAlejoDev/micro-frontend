@@ -1,10 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { DescriptionForm } from './DescriptionForm';
 import { FooterForm } from './FooterForm';
 import { HistoryForm } from './HistoryForm';
 import { Flex } from 'antd';
+import { useAdminStore } from '../../../store/useAdminStore';
 
 // Definición de los tipos de datos para cada formulario
 interface HistoryFormInputs {
@@ -29,33 +30,32 @@ interface DescriptionFormInputs {
 
 
 // Componente principal HCF
-export const HCF: React.FC = () => {
-    const [historyData, setHistoryData] = useState<HistoryFormInputs | null>(null);
-    const [descriptionData, setDescriptionData] = useState<DescriptionFormInputs | null>(null);
-    const [footerData, setFooterData] = useState<FooterFormInputs | null>(null);
+export const HCF: React.FC = (ref) => {
+
+    const { setHistoryFormData, setFooterFormData, setDescriptionFormData } = useAdminStore();
+
 
     const handleHistorySubmit: SubmitHandler<HistoryFormInputs> = (data) => {
-        setHistoryData(data);
-        console.log("History Data:", data);
+        setHistoryFormData(data);
     };
 
     const handleDescriptionSubmit: SubmitHandler<DescriptionFormInputs> = (data) => {
-        setDescriptionData(data);
-        console.log("Description Data:", data);
+        setDescriptionFormData(data);
     };
 
     const handleFooterSubmit: SubmitHandler<FooterFormInputs> = (data) => {
-        setFooterData(data);
-        console.log("Footer Data:", data);
+        setFooterFormData(data);
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Box sx={{ p: 2 }}>
-                <HistoryForm onSubmit={handleHistorySubmit} />
-                <DescriptionForm onSubmit={handleDescriptionSubmit} />
-                <FooterForm onSubmit={handleFooterSubmit} />
-            </Box>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '20px 0px', }}>
+            <Paper elevation={3}>
+                <div className='p-5 lg:w-[900px]'>
+                    <HistoryForm onSubmit={handleHistorySubmit} />
+                    <DescriptionForm onSubmit={handleDescriptionSubmit} />
+                    <FooterForm onSubmit={handleFooterSubmit} />
+                </div>
+            </Paper>
         </div>
     );
 };

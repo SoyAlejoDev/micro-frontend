@@ -1,15 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Verified } from "@mui/icons-material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { ImageUploader } from "../../../components/imageUploader/ImageUploader";
-import { Verified } from "@mui/icons-material";
+import { useAdminStore } from "../../../store/useAdminStore";
 
 interface HistoryFormInputs {
     title: string;
     description: string;
-    image: string | null;
+    image: string;
 }
 
 // Esquema de validación con yup
@@ -24,7 +25,10 @@ export const HistoryForm: React.FC<{ onSubmit: SubmitHandler<HistoryFormInputs>;
         resolver: yupResolver(historySchema),
     });
 
-    const [fileBase64, setFileBase64] = useState<string | null>(null);
+    const { historyFormData } = useAdminStore();
+
+
+    const [fileBase64, setFileBase64] = useState<string>('');
 
     // Sincroniza el estado del fileBase64 con el valor del formulario
     useEffect(() => {
@@ -32,8 +36,13 @@ export const HistoryForm: React.FC<{ onSubmit: SubmitHandler<HistoryFormInputs>;
     }, [fileBase64, setValue]);
 
     return (
-        <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
-            <Typography variant="h6">Formulario de Historia</Typography>
+        <div>
+            <div className="flex items-center justify-center gap-3">
+                <Typography variant="h6" sx={{ textAlign: 'center', margin: 0 }}>Formulario Historia</Typography>
+                {
+                    historyFormData && <Verified color='success' />
+                }
+            </div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField
                     fullWidth
@@ -80,6 +89,6 @@ export const HistoryForm: React.FC<{ onSubmit: SubmitHandler<HistoryFormInputs>;
                     </Box>
                 </div>
             </form>
-        </Paper>
+        </div>
     );
 };

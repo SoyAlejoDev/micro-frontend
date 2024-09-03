@@ -1,5 +1,5 @@
 // src/components/ImageUploader.tsx
-import { Close, Task } from '@mui/icons-material';
+import { Close, Task, WidthFull } from '@mui/icons-material';
 import Upload from '@mui/icons-material/Upload';
 import { Box, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -114,11 +114,11 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={handleClick}
-                    style={{ backgroundColor: isDragging ? '#f0f0f0' : 'transparent', cursor: 'pointer' }}
+                    style={{ backgroundColor: isDragging ? '#f0f0f0' : 'transparent', cursor: 'pointer', width: '100%' }}
                 >
                     <input
                         type="file"
-                        accept=".jpg,.png,.pdf"
+                        accept=".jpg,.png"
                         hidden
                         onChange={handleFileInputChange}
                         ref={fileInputRef}

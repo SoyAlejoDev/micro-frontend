@@ -1,17 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Help, Verified } from '@mui/icons-material';
-import { Box, Button, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
+import { IFormMain } from '../../../types';
+import { useAdminStore } from '../../../store/useAdminStore';
 
-interface IFormInput {
-    title: string;
-    description: string;
-    imageBase64: string;
-    tablesCount: number;
-}
+
 
 const schema = yup.object({
     title: yup.string().required('El título es requerido'),
@@ -23,16 +20,18 @@ const schema = yup.object({
         .min(1, 'Debe haber al menos una mesa')
 }).required();
 
-export const Main: React.FC = () => {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormInput>({
+export const Main = () => {
+
+    const { setFormMainData, formMainData } = useAdminStore();
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormMain>({
         resolver: yupResolver(schema),
         defaultValues: {
-            tablesCount: 1,  // Valor por defecto para cantidad de mesas
+            tablesCount: 1,
         },
     });
     const [fileBase64, setFileBase64] = React.useState<string | null>(null);
 
-    const onSubmit: SubmitHandler<IFormInput> = data => {
+    const onSubmit: SubmitHandler<IFormMain> = data => {
         const tables = Array.from({ length: data.tablesCount }, (_, i) => ({
             id: i + 1,
             mesa: `Mesa ${i + 1}`,
@@ -45,6 +44,7 @@ export const Main: React.FC = () => {
         };
 
         console.log(finalData);
+        setFormMainData(finalData);
     };
 
     React.useEffect(() => {
@@ -56,9 +56,15 @@ export const Main: React.FC = () => {
     return (
         <div className='flex justify-center items-center h-full'>
             <Paper elevation={3} sx={{ p: 4 }}>
-                <Typography variant="h6" gutterBottom>
-                    Presentacion
-                </Typography>
+                <div className='flex items-center gap-3'>
+                    <Typography variant="h6" gutterBottom sx={{ margin: 0 }}>
+                        Presentacion
+                    </Typography>
+                    {
+                        formMainData && <Verified color='success' />
+                    }
+
+                </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
                         <TextField

@@ -99,3 +99,38 @@ export type Orden = {
 export type Datos = {
 	[key: string]: Categorias;
 };
+
+export interface IFormMain {
+	title: string;
+	description: string;
+	imageBase64: string;
+	tablesCount: number;
+}
+
+export interface IFormFooter {
+	name: string;
+	email: string;
+	logo: string;
+	facebook: string;
+	instagram: string;
+	phone: string;
+}
+
+export interface HistoryFormInputs {
+	title: string;
+	description: string;
+	image: string | null;
+}
+
+export interface FooterFormInputs {
+	name: string;
+	email: string;
+	logo: string | null;
+	facebook: string;
+	instagram: string;
+	phone: string;
+}
+
+export interface DescriptionFormInputs {
+	items: {logo: string | null; item: string; text: string}[];
+}

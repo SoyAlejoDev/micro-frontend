@@ -1,9 +1,11 @@
-import { Add, AddCircle, Delete, DeleteOutline, ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControlLabel, Grid, IconButton, Switch, TextField, Typography } from '@mui/material';
+import { Add, AddCircle, DeleteOutline, ExpandMore, Verified } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControlLabel, Grid, IconButton, Paper, Switch, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
+import { default as swal } from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
-import { ImageUploader } from '../ImageUploader';
+import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
+import { useAdminStore } from '../../../store/useAdminStore';
 
 interface MenuItem {
     id: string;
@@ -56,6 +58,10 @@ interface MenuSection {
 export const Menu: React.FC = () => {
     const [sections, setSections] = useState<MenuSection[]>([]);
     const [newSectionName, setNewSectionName] = useState<string>('');
+
+    const { setMenuSections, menuSections } = useAdminStore();
+
+    console.log(menuSections);
 
     const handleAddSection = () => {
         if (newSectionName.trim() === '') return;
@@ -119,150 +125,112 @@ export const Menu: React.FC = () => {
     };
 
     const handleAccept = () => {
+        const hasEmptySections = sections.some((section) => section.items.length === 0);
+
+        if (sections.length === 0) {
+            swal.fire(
+                'Error',
+                'No hay datos para gestionar',
+                'error'
+            );
+            return;
+        }
+
+        if (hasEmptySections) {
+            swal.fire(
+                'No tan rápido',
+                'Todas las secciones deben tener al menos un ítem',
+                'error'
+            );
+            return;
+        }
+
         const hasIncompleteItems = sections.some((section) =>
             section.items.some((item) => !item.nombre || !item.descripcion || item.precio <= 0 || !item.foto)
         );
 
         if (hasIncompleteItems) {
-            alert('Hay opciones incompletas. Por favor, revisa el formulario.');
+            swal.fire(
+                'No tan rápido',
+                'Hay campos que faltan por completar',
+                'error'
+            );
             return;
         }
 
+        setMenuSections(sections);
         console.log(sections);
     };
 
     return (
-        <div style={{ margin: '24px 16px' }}>
-            <Grid container spacing={2} alignItems="center">
-                <Grid item xs={10}>
-                    <TextField
-                        label="Nombre de la nueva sección"
-                        variant="outlined"
-                        size='small'
-                        fullWidth
-                        value={newSectionName}
-                        onChange={(e) => setNewSectionName(e.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleAddSection}
-                    >
-                        <Add />
-                    </Button>
-                </Grid>
-            </Grid>
-
-            {sections.map((section) => (
-                <Accordion key={section.id} style={{ marginTop: 20 }}>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        <Typography variant="h5">
-                            {section.nombre}
-                            <IconButton color="secondary" onClick={() => handleDeleteSection(section.id)} style={{ marginLeft: '16px' }}>
-                                <Delete />
-                            </IconButton>
-                        </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Button
+        <Paper elevation={3} sx={{ height: '95%', margin: '6px 16px' }}>
+            <div style={{ margin: '6px 16px', height: '100%' }}>
+                <div style={{ padding: "24px 0px", textAlign: 'center' }}>
+                    <div className='flex items-center gap-3'>
+                        <Typography variant="h6" sx={{ margin: 0 }}>Gestión de Menú</Typography>
+                        {
+                            menuSections.length != 0 && <Verified color='success' />
+                        }
+                    </div>
+                </div>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={10}>
+                        <TextField
+                            label="Nombre de la nueva sección"
                             variant="outlined"
-                            color="secondary"
-                            startIcon={<AddCircle />}
-                            onClick={() => handleAddItem(section.id)}
-                            style={{ marginBottom: 10 }}
+                            size='small'
+                            fullWidth
+                            value={newSectionName}
+                            onChange={(e) => setNewSectionName(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            onClick={handleAddSection}
+                            startIcon={<Add />}
+                            sx={{ textTransform: 'none' }}
                         >
-                            Agregar Opción
+                            Agregar sección
                         </Button>
+                    </Grid>
+                </Grid>
 
-                        <Grid container spacing={2}>
-                            {section.items.map((item) => (
-                                <Grid item xs={12} sm={6} md={4} key={item.id}>
-                                    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px' }}>
-                                        <div className='flex gap-2'>
-                                            <TextField
-                                                label="Nombre"
-                                                variant="outlined"
-                                                fullWidth
-                                                size='small'
-                                                value={item.nombre}
-                                                onChange={(e) =>
-                                                    setSections((prevSections) =>
-                                                        prevSections.map((sec) =>
-                                                            sec.id === section.id
-                                                                ? {
-                                                                    ...sec,
-                                                                    items: sec.items.map((it) =>
-                                                                        it.id === item.id ? { ...it, nombre: e.target.value } : it
-                                                                    ),
-                                                                }
-                                                                : sec
-                                                        )
-                                                    )
-                                                }
-                                                style={{ marginBottom: 10 }}
-                                            />
-                                            <TextField
-                                                label="Precio"
-                                                variant="outlined"
-                                                type="number"
-                                                sx={{ maxWidth: '100px' }}
-                                                size='small'
-                                                value={item.precio}
-                                                onChange={(e) =>
-                                                    setSections((prevSections) =>
-                                                        prevSections.map((sec) =>
-                                                            sec.id === section.id
-                                                                ? {
-                                                                    ...sec,
-                                                                    items: sec.items.map((it) =>
-                                                                        it.id === item.id ? { ...it, precio: parseFloat(e.target.value) } : it
-                                                                    ),
-                                                                }
-                                                                : sec
-                                                        )
-                                                    )
-                                                }
-                                                style={{ marginBottom: 10 }}
-                                            />
-                                        </div>
-                                        <TextField
-                                            label="Descripción"
-                                            variant="outlined"
-                                            fullWidth
-                                            size='small'
-                                            multiline
-                                            rows={2}
-                                            value={item.descripcion}
-                                            onChange={(e) =>
-                                                setSections((prevSections) =>
-                                                    prevSections.map((sec) =>
-                                                        sec.id === section.id
-                                                            ? {
-                                                                ...sec,
-                                                                items: sec.items.map((it) =>
-                                                                    it.id === item.id ? { ...it, descripcion: e.target.value } : it
-                                                                ),
-                                                            }
-                                                            : sec
-                                                    )
-                                                )
-                                            }
-                                            style={{ marginBottom: 10 }}
-                                        />
+                {sections.map((section) => (
+                    <Accordion key={section.id} style={{ marginTop: 20 }}>
+                        <AccordionSummary expandIcon={<ExpandMore />}>
+                            <Typography variant="h5">
+                                {section.nombre}
+                                <IconButton color="secondary" onClick={() => handleDeleteSection(section.id)} >
+                                    <DeleteOutline color='error' />
+                                </IconButton>
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<AddCircle />}
+                                onClick={() => handleAddItem(section.id)}
+                                style={{ marginBottom: 10, textTransform: 'none' }}
 
-                                        <ImageUploader
-                                            setFileBase64={(base64) => handleFileBase64Change(section.id, item.id, base64)}
-                                            fileBase64={item.foto}
-                                        />
-                                        <div className='flex justify-between mt-3'>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                            >
+                                Agregar Opción
+                            </Button>
 
-                                                <FormControlLabel
-                                                    control={<Android12Switch defaultChecked />}
-                                                    label="Habilitado"
+                            <Grid container spacing={2}>
+                                {section.items.map((item) => (
+                                    <Grid item xs={12} sm={6} md={4} key={item.id}>
+                                        <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px' }}>
+                                            <div className='flex gap-2'>
+                                                <TextField
+                                                    label="Nombre"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    size='small'
+                                                    value={item.nombre}
                                                     onChange={(e) =>
                                                         setSections((prevSections) =>
                                                             prevSections.map((sec) =>
@@ -270,40 +238,117 @@ export const Menu: React.FC = () => {
                                                                     ? {
                                                                         ...sec,
                                                                         items: sec.items.map((it) =>
-                                                                            it.id === item.id ? { ...it, habilitado: e.target.checked } : it
+                                                                            it.id === item.id ? { ...it, nombre: e.target.value } : it
                                                                         ),
                                                                     }
                                                                     : sec
                                                             )
                                                         )
                                                     }
+                                                    style={{ marginBottom: 10 }}
+                                                />
+                                                <TextField
+                                                    label="Precio"
+                                                    variant="outlined"
+                                                    type="number"
+                                                    sx={{ maxWidth: '100px' }}
+                                                    size='small'
+                                                    value={item.precio}
+                                                    onChange={(e) =>
+                                                        setSections((prevSections) =>
+                                                            prevSections.map((sec) =>
+                                                                sec.id === section.id
+                                                                    ? {
+                                                                        ...sec,
+                                                                        items: sec.items.map((it) =>
+                                                                            it.id === item.id ? { ...it, precio: parseFloat(e.target.value) } : it
+                                                                        ),
+                                                                    }
+                                                                    : sec
+                                                            )
+                                                        )
+                                                    }
+                                                    style={{ marginBottom: 10 }}
                                                 />
                                             </div>
+                                            <TextField
+                                                label="Descripción"
+                                                variant="outlined"
+                                                fullWidth
+                                                size='small'
+                                                multiline
+                                                rows={2}
+                                                value={item.descripcion}
+                                                onChange={(e) =>
+                                                    setSections((prevSections) =>
+                                                        prevSections.map((sec) =>
+                                                            sec.id === section.id
+                                                                ? {
+                                                                    ...sec,
+                                                                    items: sec.items.map((it) =>
+                                                                        it.id === item.id ? { ...it, descripcion: e.target.value } : it
+                                                                    ),
+                                                                }
+                                                                : sec
+                                                        )
+                                                    )
+                                                }
+                                                style={{ marginBottom: 10 }}
+                                            />
 
-                                            <IconButton
-                                                color="error"
-                                                onClick={() => handleDeleteItem(section.id, item.id)}
-                                            >
-                                                <DeleteOutline />
-                                            </IconButton>
+                                            <ImageUploader
+                                                setFileBase64={(base64) => handleFileBase64Change(section.id, item.id, base64)}
+                                                fileBase64={item.foto}
+                                            />
+                                            <div className='flex justify-between mt-3'>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+
+                                                    <FormControlLabel
+                                                        control={<Android12Switch defaultChecked />}
+                                                        label="Habilitado"
+                                                        onChange={(e) =>
+                                                            setSections((prevSections) =>
+                                                                prevSections.map((sec) =>
+                                                                    sec.id === section.id
+                                                                        ? {
+                                                                            ...sec,
+                                                                            items: sec.items.map((it) =>
+                                                                                it.id === item.id ? { ...it, habilitado: e.target.checked } : it
+                                                                            ),
+                                                                        }
+                                                                        : sec
+                                                                )
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <IconButton
+                                                    color="error"
+                                                    onClick={() => handleDeleteItem(section.id, item.id)}
+                                                >
+                                                    <DeleteOutline />
+                                                </IconButton>
+                                            </div>
                                         </div>
-                                    </div>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
 
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAccept}
-                style={{ marginTop: 20 }}
-            >
-                Aceptar
-            </Button>
-        </div>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAccept}
+                    style={{ marginTop: 20 }}
+                    sx={{ textTransform: 'none' }}
+                    startIcon={<Verified />}
+                >
+                    Comprobar
+                </Button>
+            </div>
+        </Paper>
     );
 };
-
