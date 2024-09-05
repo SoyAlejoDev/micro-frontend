@@ -4,7 +4,7 @@ export interface IFormMain {
     title: string;
     description: string;
     imageBase64: string;
-    tablesCount: number;
+    tablesCount: string;
 }
 
 export interface IFormFooter {
@@ -58,6 +58,7 @@ interface AppState {
     menuSections: MenuSection[];
 
     setFormMainData: (data: IFormMain) => void;
+    removeFormMainData: () => void;
     setHistoryFormData: (data: HistoryFormInputs) => void;
     setFooterFormData: (data: FooterFormInputs) => void;
     setDescriptionFormData: (data: DescriptionFormInputs) => void;
@@ -73,6 +74,7 @@ export const useAdminStore = create<AppState>((set) => ({
     menuSections: [],
 
     setFormMainData: (data: IFormMain) => set({ formMainData: data }),
+    removeFormMainData: () => set({ formMainData: null }),
     setHistoryFormData: (data: HistoryFormInputs) => set({ historyFormData: data }),
     setFooterFormData: (data: FooterFormInputs) => set({ footerFormData: data }),
     setDescriptionFormData: (data: DescriptionFormInputs) => set({ descriptionFormData: data }),

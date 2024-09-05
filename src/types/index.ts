@@ -104,7 +104,7 @@ export interface IFormMain {
 	title: string;
 	description: string;
 	imageBase64: string;
-	tablesCount: number;
+	tablesCount: string;
 }
 
 export interface IFormFooter {

@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, FormControlLabel
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ImageUploader } from './ImageUploader';
+import { ImageUploader } from '../../components/imageUploader/ImageUploader';
 
 interface MenuItem {
     id: string;

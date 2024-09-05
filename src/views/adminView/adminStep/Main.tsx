@@ -7,45 +7,49 @@ import * as yup from 'yup';
 import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
 import { IFormMain } from '../../../types';
 import { useAdminStore } from '../../../store/useAdminStore';
-
-
+import _ from 'lodash'; // Importamos lodash para comparar objetos
 
 const schema = yup.object({
     title: yup.string().required('El título es requerido'),
     description: yup.string().required('La descripción es requerida'),
     imageBase64: yup.string().required('La imagen es requerida'),
-    tablesCount: yup
-        .number()
-        .required('La cantidad de mesas es requerida')
-        .min(1, 'Debe haber al menos una mesa')
+    tablesCount: yup.string().required('La cantidad de mesas es requerida')
 }).required();
 
 export const Main = () => {
-
-    const { setFormMainData, formMainData } = useAdminStore();
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormMain>({
+    const { setFormMainData, formMainData, removeFormMainData } = useAdminStore();
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IFormMain>({
         resolver: yupResolver(schema),
-        defaultValues: {
-            tablesCount: 1,
-        },
     });
     const [fileBase64, setFileBase64] = React.useState<string | null>(null);
 
     const onSubmit: SubmitHandler<IFormMain> = data => {
-        const tables = Array.from({ length: data.tablesCount }, (_, i) => ({
-            id: i + 1,
-            mesa: `Mesa ${i + 1}`,
-            bussy: false,
-        }));
+        if (Number(data.tablesCount)) {
+            const tables = Array.from({ length: Number(data.tablesCount) }, (_, i) => ({
+                id: i + 1,
+                mesa: `Mesa ${i + 1}`,
+                bussy: false,
+            }));
 
-        const finalData = {
-            ...data,
-            mesas: tables,
-        };
+            //@ts-ignore
+            setValue('mesas', tables, { shouldValidate: true });
 
-        console.log(finalData);
-        setFormMainData(finalData);
+            const updatedData = {
+                ...data,
+                mesas: tables,
+            };
+            setFormMainData(updatedData);
+        }
     };
+
+    const formValues = watch();
+
+    React.useEffect(() => {
+
+        if (!_.isEqual(formValues, formMainData)) {
+            formMainData && removeFormMainData();
+        }
+    }, [formValues]);
 
     React.useEffect(() => {
         if (fileBase64) {
@@ -60,10 +64,7 @@ export const Main = () => {
                     <Typography variant="h6" gutterBottom sx={{ margin: 0 }}>
                         Presentacion
                     </Typography>
-                    {
-                        formMainData && <Verified color='success' />
-                    }
-
+                    {formMainData && <Verified color='success' />}
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
@@ -98,16 +99,10 @@ export const Main = () => {
                         label="Cantidad de Mesas"
                         variant="outlined"
                         size='small'
-                        type="number"
                         {...register('tablesCount')}
                         error={!!errors.tablesCount}
                         helperText={errors.tablesCount?.message}
                         margin="normal"
-                        InputProps={{
-                            inputProps: {
-                                min: 1,
-                            },
-                        }}
                     />
 
                     <Box sx={{ mt: 2 }}>
