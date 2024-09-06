@@ -61,8 +61,6 @@ export const Menu: React.FC = () => {
 
     const { setMenuSections, menuSections } = useAdminStore();
 
-    console.log(menuSections);
-
     const handleAddSection = () => {
         if (newSectionName.trim() === '') return;
 

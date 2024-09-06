@@ -59,9 +59,16 @@ interface AppState {
 
     setFormMainData: (data: IFormMain) => void;
     removeFormMainData: () => void;
+
     setHistoryFormData: (data: HistoryFormInputs) => void;
-    setFooterFormData: (data: FooterFormInputs) => void;
+    removeHistoryFormData: () => void;
+
     setDescriptionFormData: (data: DescriptionFormInputs) => void;
+    removeDescriptionFormData: () => void;
+
+    setFooterFormData: (data: FooterFormInputs) => void;
+    removeFooterFormData: () => void;
+
     setMenuSections: (sections: MenuSection[]) => void;
 }
 
@@ -75,9 +82,15 @@ export const useAdminStore = create<AppState>((set) => ({
 
     setFormMainData: (data: IFormMain) => set({ formMainData: data }),
     removeFormMainData: () => set({ formMainData: null }),
+
     setHistoryFormData: (data: HistoryFormInputs) => set({ historyFormData: data }),
-    setFooterFormData: (data: FooterFormInputs) => set({ footerFormData: data }),
+    removeHistoryFormData: () => set({ historyFormData: null }),
+
     setDescriptionFormData: (data: DescriptionFormInputs) => set({ descriptionFormData: data }),
+    removeDescriptionFormData: () => set({ descriptionFormData: null }),
+
+    setFooterFormData: (data: FooterFormInputs) => set({ footerFormData: data }),
+    removeFooterFormData: () => set({ footerFormData: null }),
 
     setMenuSections: (sections: MenuSection[]) => set({ menuSections: sections }),
 }));

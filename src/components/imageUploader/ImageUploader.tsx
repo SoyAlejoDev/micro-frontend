@@ -1,5 +1,5 @@
 // src/components/ImageUploader.tsx
-import { Close, Task, WidthFull } from '@mui/icons-material';
+import { Close, Task } from '@mui/icons-material';
 import Upload from '@mui/icons-material/Upload';
 import { Box, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -80,7 +80,7 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
     return (
         <>
             {uploadStatus === 'success' ? (
-                <Paper elevation={3} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', borderRadius: '8px' }}>
+                <Paper elevation={3} style={{ display: 'flex', justifyContent: 'space-between', padding: '0px 6px', borderRadius: '8px', width: '100%' }}>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <Task color='primary' />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>

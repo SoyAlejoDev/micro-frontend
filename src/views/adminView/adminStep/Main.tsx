@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
 import { IFormMain } from '../../../types';
 import { useAdminStore } from '../../../store/useAdminStore';
-import _ from 'lodash'; // Importamos lodash para comparar objetos
+import _ from 'lodash';
 
 const schema = yup.object({
     title: yup.string().required('El título es requerido'),
@@ -21,7 +21,7 @@ export const Main = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IFormMain>({
         resolver: yupResolver(schema),
     });
-    const [fileBase64, setFileBase64] = React.useState<string | null>(null);
+    const [fileBase64, setFileBase64] = React.useState<string | null>('');
 
     const onSubmit: SubmitHandler<IFormMain> = data => {
         if (Number(data.tablesCount)) {
@@ -58,16 +58,16 @@ export const Main = () => {
     }, [fileBase64, setValue]);
 
     return (
-        <div className='flex justify-center items-center h-full'>
+        <div className=''>
             <Paper elevation={3} sx={{ p: 4 }}>
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-3 justify-center'>
                     <Typography variant="h6" gutterBottom sx={{ margin: 0 }}>
                         Presentacion
                     </Typography>
                     {formMainData && <Verified color='success' />}
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <TextField
                             fullWidth
                             label="Título"
@@ -79,48 +79,61 @@ export const Main = () => {
                             margin="normal"
                             autoComplete='none'
                         />
-                        <Tooltip title="Ayuda" arrow placement="right-start">
+                        <Tooltip title="Aqui va el titulo principal de la pagina web" arrow placement="top">
                             <Help htmlColor='gray' />
                         </Tooltip>
                     </div>
-                    <TextField
-                        fullWidth
-                        label="Descripción"
-                        variant="outlined"
-                        {...register('description')}
-                        error={!!errors.description}
-                        helperText={errors.description?.message}
-                        margin="normal"
-                        multiline
-                        rows={4}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Cantidad de Mesas"
-                        variant="outlined"
-                        size='small'
-                        {...register('tablesCount')}
-                        error={!!errors.tablesCount}
-                        helperText={errors.tablesCount?.message}
-                        margin="normal"
-                    />
-
-                    <Box sx={{ mt: 2 }}>
-                        <ImageUploader
-                            setFileBase64={setFileBase64}
-                            fileBase64={fileBase64}
+                    <div className='flex gap-2 items-start'>
+                        <TextField
+                            fullWidth
+                            label="Descripción"
+                            variant="outlined"
+                            {...register('description')}
+                            error={!!errors.description}
+                            helperText={errors.description?.message}
+                            margin="normal"
+                            multiline
+                            rows={4}
                         />
-                        {errors.imageBase64 && (
-                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                                {errors.imageBase64.message}
-                            </Typography>
-                        )}
-                    </Box>
+                        <Tooltip sx={{ mt: 2 }} title="Foto para fondo de la pantalla principal" arrow placement="top">
+                            <Help htmlColor='gray' />
+                        </Tooltip>
+                    </div>
+                    <div className='flex gap-3'>
+                        <TextField
+                            fullWidth
+                            label="Cantidad de Mesas"
+                            variant="outlined"
+                            size='small'
+                            type='number'
+                            {...register('tablesCount')}
+                            error={!!errors.tablesCount}
+                            helperText={errors.tablesCount?.message}
+                            margin="normal"
+                        />
 
-                    <Box sx={{ mt: 3 }}>
+                        <Box sx={{ mt: 2, width: '100%' }}>
+                            <div className='flex gap-3 items-center'>
+                                <ImageUploader
+                                    setFileBase64={setFileBase64}
+                                    fileBase64={fileBase64}
+                                />
+                                <Tooltip title="Foto para fondo de la pantalla principal" arrow placement="top">
+                                    <Help htmlColor='gray' />
+                                </Tooltip>
+                            </div>
+                            {errors.imageBase64 && (
+                                <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                                    {errors.imageBase64.message}
+                                </Typography>
+                            )}
+                        </Box>
+                    </div>
+
+                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
                             startIcon={<Verified />}
-                            variant="contained" color="primary" type="submit" fullWidth sx={{ textTransform: 'none' }}>
+                            variant="contained" color="primary" type="submit" sx={{ textTransform: 'none' }}>
                             Comprobar
                         </Button>
                     </Box>

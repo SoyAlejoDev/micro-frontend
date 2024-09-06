@@ -5,8 +5,7 @@ import {
 import { CalendarMonth, Today, Web } from '@mui/icons-material';
 import { Button, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
-import { AdminStep } from './AdminStep';
-import { Main } from './Main';
+import { AdminStepper } from './AdminStepper';
 
 const { Header, Sider, Content } = Layout;
 
@@ -24,14 +23,14 @@ export const AdminDashboard = () => {
             case '2':
                 return <div>Content for nav 2</div>;
             case '3':
-                return <AdminStep />;
+                return <AdminStepper />;
             default:
                 return <div>Content</div>;
         }
     };
 
     return (
-        <Layout style={{ height: '100vh' }}>
+        <Layout style={{ height: '100%', minHeight: '100vh' }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className="demo-logo-vertical" />
                 <Menu
