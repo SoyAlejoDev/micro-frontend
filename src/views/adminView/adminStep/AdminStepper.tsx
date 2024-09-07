@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
 import Step from '@mui/material/Step';
 import StepContent from '@mui/material/StepContent';
 import StepLabel from '@mui/material/StepLabel';
@@ -8,12 +7,12 @@ import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useAdminStore } from '../../../store/useAdminStore';
+import { DataSend } from './DataSend';
 import { DescriptionForm } from './DescriptionForm';
 import { FooterForm } from './FooterForm';
 import { HistoryForm } from './HistoryForm';
 import { Main } from './Main';
 
-const ComponentFive = () => <Typography>Componente 5</Typography>;
 
 const steps = [
     {
@@ -34,7 +33,7 @@ const steps = [
     },
     {
         label: 'Enviar Datos',
-        component: <ComponentFive />,
+        component: <DataSend />,
     },
 ];
 
@@ -52,10 +51,6 @@ export const AdminStepper = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-
     const isNextButtonDisabled = () => {
         switch (activeStep) {
             case 0:
@@ -69,6 +64,7 @@ export const AdminStepper = () => {
             // return false;
             case 3:
                 return !footerFormData;
+            // return false;
             default:
                 return false;
         }
@@ -111,14 +107,7 @@ export const AdminStepper = () => {
                     </Step>
                 ))}
             </Stepper>
-            {/* {activeStep === steps.length && (
-                <Paper square elevation={0} sx={{ p: 3 }}>
-                    <Typography>Todos los pasos completados - ¡has terminado!</Typography>
-                    <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                        Reiniciar
-                    </Button>
-                </Paper>
-            )} */}
+
         </div>
     );
 };

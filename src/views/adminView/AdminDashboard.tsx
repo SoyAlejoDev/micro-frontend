@@ -2,10 +2,11 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined
 } from '@ant-design/icons';
-import { CalendarMonth, Today, Web } from '@mui/icons-material';
+import { Equalizer, MenuBook, Newspaper, Web } from '@mui/icons-material';
 import { Button, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
-import { AdminStepper } from './AdminStepper';
+import { AdminStepper } from './adminStep/AdminStepper';
+import { MenuAdmin } from './adminStep/MenuAdmin';
 
 const { Header, Sider, Content } = Layout;
 
@@ -24,6 +25,8 @@ export const AdminDashboard = () => {
                 return <div>Content for nav 2</div>;
             case '3':
                 return <AdminStepper />;
+            case '4':
+                return <MenuAdmin />;
             default:
                 return <div>Content</div>;
         }
@@ -42,18 +45,23 @@ export const AdminDashboard = () => {
                     items={[
                         {
                             key: '1',
-                            icon: <Today style={{ fontSize: '25px' }} />,
+                            icon: <Equalizer style={{ fontSize: '25px' }} />,
                             label: 'Resumen diario',
                         },
                         {
                             key: '2',
-                            icon: <CalendarMonth style={{ fontSize: '25px' }} />,
+                            icon: <Newspaper style={{ fontSize: '25px' }} />,
                             label: 'Resumen mensual',
                         },
                         {
                             key: '3',
                             icon: <Web style={{ fontSize: '25px' }} />,
                             label: 'Control web',
+                        },
+                        {
+                            key: '4',
+                            icon: <MenuBook style={{ fontSize: '25px' }} />,
+                            label: 'Control Menu',
                         },
                     ]}
                 />

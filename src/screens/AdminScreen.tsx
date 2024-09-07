@@ -1,4 +1,4 @@
-import { AdminDashboard } from "../views/adminView/adminStep/AdminDashboard";
+import { AdminDashboard } from "../views/adminView/AdminDashboard";
 
 export const AdminScreen = () => {
 

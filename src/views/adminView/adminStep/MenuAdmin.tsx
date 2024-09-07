@@ -1,11 +1,12 @@
 import { Add, AddCircle, DeleteOutline, ExpandMore, Verified } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Button, FormControlLabel, Grid, IconButton, Paper, Switch, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { default as swal } from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
 import { useAdminStore } from '../../../store/useAdminStore';
+import _ from 'lodash';
 
 interface MenuItem {
     id: string;
@@ -55,11 +56,18 @@ interface MenuSection {
     items: MenuItem[];
 }
 
-export const Menu: React.FC = () => {
+export const MenuAdmin: React.FC = () => {
     const [sections, setSections] = useState<MenuSection[]>([]);
     const [newSectionName, setNewSectionName] = useState<string>('');
 
-    const { setMenuSections, menuSections } = useAdminStore();
+    const { setMenuSections, menuSections, removeMenuSections } = useAdminStore();
+
+    // Load sections from global state (menuSections) when component mounts
+    useEffect(() => {
+        if (menuSections.length > 0) {
+            setSections(menuSections);
+        }
+    }, [menuSections]);
 
     const handleAddSection = () => {
         if (newSectionName.trim() === '') return;
@@ -156,9 +164,9 @@ export const Menu: React.FC = () => {
             return;
         }
 
-        setMenuSections(sections);
-        console.log(sections);
+        setMenuSections(sections); // Update global state with sections
     };
+
 
     return (
         <Paper elevation={3} sx={{ height: '95%', margin: '6px 16px' }}>
@@ -295,7 +303,7 @@ export const Menu: React.FC = () => {
                                             />
 
                                             <ImageUploader
-                                                setFileBase64={(base64) => handleFileBase64Change(section.id, item.id, base64)}
+                                                setFileBase64={(base64 = '') => handleFileBase64Change(section.id, item.id, base64)}
                                                 fileBase64={item.foto}
                                             />
                                             <div className='flex justify-between mt-3'>

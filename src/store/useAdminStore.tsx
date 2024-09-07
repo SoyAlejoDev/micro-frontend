@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 export interface IFormMain {
     title: string;
@@ -70,6 +70,7 @@ interface AppState {
     removeFooterFormData: () => void;
 
     setMenuSections: (sections: MenuSection[]) => void;
+    removeMenuSections: () => void;
 }
 
 // Implementación del Store
@@ -93,4 +94,5 @@ export const useAdminStore = create<AppState>((set) => ({
     removeFooterFormData: () => set({ footerFormData: null }),
 
     setMenuSections: (sections: MenuSection[]) => set({ menuSections: sections }),
+    removeMenuSections: () => set({ menuSections: undefined })
 }));
