@@ -6,9 +6,38 @@ export interface Data {
 	history: History;
 	characteristics: Characteristic[];
 	footer: Footer;
-	mesas: MesasArray[];
 	cocina: Datos;
+	mesas: MesasArray[];
 	new_data_menu: NewDataMenu[];
+}
+
+interface Main {
+	title: string;
+	label: string;
+	foto: string;
+}
+interface History {
+	title: string;
+	label: string;
+	foto: string;
+}
+export interface Characteristic {
+	logo: string;
+	item: string;
+	text: string;
+}
+export interface Footer {
+	name: string;
+	correo: string;
+	logo: string;
+	instagram: string;
+	facebook: string;
+	contacto: string;
+}
+export interface MesasArray {
+	mesa: string;
+	id: number;
+	bussy: boolean;
 }
 
 export interface NewDataMenu {
@@ -24,39 +53,6 @@ export interface Items {
 	precio: number;
 	foto: string;
 	habilitado: boolean;
-}
-
-interface Main {
-	title: string;
-	label: string;
-	foto: string;
-}
-
-interface History {
-	title: string;
-	label: string;
-	foto: string;
-}
-
-export interface Characteristic {
-	logo: string;
-	item: string;
-	text: string;
-}
-
-export interface Footer {
-	name: string;
-	correo: string;
-	logo: string;
-	instagram: string;
-	facebook: string;
-	contacto: string;
-}
-
-export interface MesasArray {
-	mesa: string;
-	id: number;
-	bussy: boolean;
 }
 
 export interface OrderItem {

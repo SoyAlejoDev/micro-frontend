@@ -7,17 +7,17 @@ import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useAdminStore } from '../../../store/useAdminStore';
-import { DataSend } from './DataSend';
+import { DataSend } from '../DataSend';
 import { DescriptionForm } from './DescriptionForm';
 import { FooterForm } from './FooterForm';
 import { HistoryForm } from './HistoryForm';
-import { Main } from './Main';
+import { MainForm } from './MainForm';
 
 
 const steps = [
     {
         label: 'Inicio',
-        component: <Main />,
+        component: <MainForm />,
     },
     {
         label: 'Historia',

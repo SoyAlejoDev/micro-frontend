@@ -8,11 +8,12 @@ import { MenuItem } from './menu/menuItem/MenuItem';
 interface Props {
     selectedMenu: string;
     socketData: Data | null;
+    seccionesMenu: string[];
 }
 
-export const RenderContent = ({ selectedMenu, socketData }: Props) => {
+export const RenderContent = ({ selectedMenu, socketData, seccionesMenu }: Props) => {
     switch (selectedMenu) {
-        case "Inicio":
+        case seccionesMenu[0]:
             return (
                 <>
                     <MainMenu socketData={socketData} />
@@ -21,18 +22,18 @@ export const RenderContent = ({ selectedMenu, socketData }: Props) => {
                     <Footer socketData={socketData} />
                 </>
             );
-        case "Entrantes":
-            return <MenuItem seccion='Entrantes' />;
-        case "Bebidas":
-            return <MenuItem seccion='Bebidas' />;
-        case "Comidas":
-            return <MenuItem seccion='Comidas' />;
-        case "Agregados":
-            return <MenuItem seccion='Agregados' />;
-        case "Pizzas":
-            return <MenuItem seccion='Pizzas' />;
-        case "Postres":
-            return <MenuItem seccion='Postres' />;
+        case seccionesMenu[1]:
+            return <MenuItem seccion={seccionesMenu[1]} />;
+        case seccionesMenu[2]:
+            return <MenuItem seccion={seccionesMenu[2]} />;
+        case seccionesMenu[3]:
+            return <MenuItem seccion={seccionesMenu[3]} />;
+        case seccionesMenu[4]:
+            return <MenuItem seccion={seccionesMenu[4]} />;
+        case seccionesMenu[5]:
+            return <MenuItem seccion={seccionesMenu[5]} />;
+        case seccionesMenu[6]:
+            return <MenuItem seccion={seccionesMenu[6]} />;
         default:
             return (
                 <>

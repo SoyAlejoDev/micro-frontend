@@ -16,7 +16,7 @@ const schema = yup.object({
     tablesCount: yup.string().required('La cantidad de mesas es requerida')
 }).required();
 
-export const Main = () => {
+export const MainForm = () => {
     const { setFormMainData, formMainData, removeFormMainData } = useAdminStore();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IFormMain>({
         resolver: yupResolver(schema),

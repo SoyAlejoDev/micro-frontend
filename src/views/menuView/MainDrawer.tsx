@@ -93,6 +93,8 @@ export const MainDrawer = () => {
         setSelectedMenu(menu);
     };
 
+    console.log(seccionesMenu);
+
     return (
         <>
             {!online ? (
@@ -170,6 +172,7 @@ export const MainDrawer = () => {
                         <DrawerHeader />
 
                         <RenderContent
+                            seccionesMenu={seccionesMenu}
                             selectedMenu={selectedMenu}
                             socketData={socketData}
                         />

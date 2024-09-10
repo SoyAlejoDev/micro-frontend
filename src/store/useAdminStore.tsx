@@ -5,6 +5,13 @@ export interface IFormMain {
     description: string;
     imageBase64: string;
     tablesCount: string;
+    mesas: MesasArray[];
+}
+
+export interface MesasArray {
+    mesa: string;
+    id: number;
+    bussy: boolean;
 }
 
 export interface IFormFooter {

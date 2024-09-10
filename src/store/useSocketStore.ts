@@ -43,6 +43,7 @@ export const useSocketStore = create<SocketStateData & OrderState & SocketState>
 		});
 
 		socket.on("emit-data", (data: Data) => {
+			console.log(data);
 			set({socketData: data});
 		});
 

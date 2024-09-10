@@ -1,17 +1,19 @@
 import { Send } from '@mui/icons-material';
 import { Button, Paper, Typography } from '@mui/material';
-import { useAdminStore } from '../../../store/useAdminStore';
-import { useSocketStore } from '../../../store/useSocketStore';
+import { useAdminStore } from '../../store/useAdminStore';
+import { useSocketStore } from '../../store/useSocketStore';
 
 export const DataSend = () => {
-    const { descriptionFormData, footerFormData, formMainData, historyFormData } = useAdminStore();
+    const { descriptionFormData: characteristics, footerFormData: footer, formMainData: main, historyFormData: history } = useAdminStore();
+    //@ts-ignore
+    const { formMainData: { mesas } } = useAdminStore();
     const { socket } = useSocketStore();
-    const formMainDataString = JSON.stringify(formMainData);
 
-    const resumeData = { descriptionFormData, footerFormData, formMainDataString, historyFormData };
+    const resumeData = { characteristics, footer, main, history, mesas };
 
 
     const onClick = () => {
+        console.log(resumeData);
         socket.emit('formularios-web', resumeData);
     };
     return (
