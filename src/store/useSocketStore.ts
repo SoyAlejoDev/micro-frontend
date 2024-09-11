@@ -15,7 +15,6 @@ interface SocketStateData {
 	socket: any;
 	socketData: Data | null;
 	online: boolean;
-	meseroLogin: boolean | null; // Nueva propiedad para el estado de autenticación
 }
 
 export const useSocketStore = create<SocketStateData & OrderState & SocketState>((set, get) => ({
@@ -24,11 +23,8 @@ export const useSocketStore = create<SocketStateData & OrderState & SocketState>
 	socket: null,
 	socketData: null,
 	online: false,
-	meseroLogin: null, // Inicializa la propiedad meseroLogin
-
 	ordersByTable: {},
 
-	// Conexión del socket
 	connectSocket: () => {
 		const socket = io(import.meta.env.VITE_URL_SOCKET, {
 			transports: ["websocket"],
@@ -47,22 +43,9 @@ export const useSocketStore = create<SocketStateData & OrderState & SocketState>
 			set({socketData: data});
 		});
 
-		socket.on("meseroLogin", (data: {logged: boolean}) => {
-			if (data.logged) {
-				set({meseroLogin: true}); // Actualiza el estado meseroLogin a true
-			} else {
-				set({meseroLogin: false});
-			}
-		});
-
 		socket.on("orderSaved", data => {
 			console.log(data);
 			set({cocina: data});
-		});
-
-		socket.on("meseroLogout", (data: {logged: boolean}) => {
-			console.log(data);
-			set({meseroLogin: undefined});
 		});
 
 		set({socket});

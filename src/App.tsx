@@ -4,6 +4,7 @@ import { useSocketStore } from './store/useSocketStore';
 import { AdminScreen, Cocina, Menu, Mesero } from './screens';
 import { Mesas } from './components/mesas/Mesas';
 import { MeseroContainer } from './views/meseroView/MeseroContainer';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
 

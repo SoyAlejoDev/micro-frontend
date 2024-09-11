@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useSocketStore } from '../../store/useSocketStore';
 import { MesasItems } from './MesasItems';
 import { Loading } from '../loading/Loading';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const Mesas = () => {
 
-    const { online, socketData, meseroLogin, socket } = useSocketStore();
+    const { online, socketData } = useSocketStore();
+
+    const { meseroLogin } = useAuthStore();
 
     const navigate = useNavigate();
 
@@ -20,7 +23,7 @@ export const Mesas = () => {
     }, [meseroLogin]);
 
     const handleClick = () => {
-        socket.emit('mesero-logout', { logged: false });
+
         navigate('/mesero');
     };
 

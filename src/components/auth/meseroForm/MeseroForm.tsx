@@ -1,220 +1,185 @@
-import { Close } from '@mui/icons-material';
-import { Button, TextField } from '@mui/material';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useSocketStore } from '../../../store/useSocketStore';
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { gapi } from "gapi-script";
+import { useEffect, useState } from "react";
+import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
+import { Controller, useForm } from "react-hook-form";
+import { useAuthStore } from "../../../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
-interface User {
-    user: string;
+interface ProfileObj {
+    googleId: string;
+    imageUrl: string;
+    email: string;
+    name: string;
+    givenName: string;
+    familyName: string;
+}
+
+interface FormInputs {
+    email: string;
     password: string;
 }
 
-export const MeseroForm = () => {
-    const { handleSubmit, control, formState: { errors, isValid } } = useForm<User>();
-    const { socket, meseroLogin } = useSocketStore();
+export function MeseroForm() {
+    const clientID = import.meta.env.VITE_OAUTH_ID_CLIENT;
+    const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<User> = data => {
-        console.log(data);
-        socket?.emit('mesero-login', data);
+    const { checkMesero, meseroLogin } = useAuthStore();
+
+    const [user, setUser] = useState<ProfileObj | undefined>();
+    const [error, setError] = useState("");
+
+    const { control, handleSubmit, formState: { errors } } = useForm<FormInputs>();
+
+    const onGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        console.log(response);
+        if ('profileObj' in response) {
+            setUser(response.profileObj);
+            checkMesero(response.profileObj.email);
+        }
     };
 
+    const onGoogleFailure = (error: any) => {
+        console.log("Google Sign In was unsuccessful. Try again later", error);
+        setError("Google Sign In failed. Please try again.");
+    };
+
+    const handleLogout = () => {
+        setUser(undefined);
+        setError("");
+    };
+
+    const onSubmit = (data: FormInputs) => {
+        // Aquí deberías implementar la lógica de autenticación con tu backend
+        // Por ahora, solo verificamos si el email está en el array de meseros
+        setUser({
+            googleId: "",
+            imageUrl: "",
+            email: data.email,
+            name: data.email.split("@")[0],
+            givenName: "",
+            familyName: ""
+        });
+        checkMesero(data.email);
+    };
+
+    useEffect(() => {
+        const start = () => {
+            gapi.client.init({
+                clientId: clientID,
+                scope: "",
+            });
+        };
+
+        gapi.load("client:auth2", start);
+    }, []);
+
+    useEffect(() => {
+        if (meseroLogin) {
+            navigate('/mesas');
+        } else if (user) {
+            setError("No tienes permisos de mesero.");
+        }
+    }, [meseroLogin, user, navigate]);
+
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <Container component="main" maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <Typography component="h1" variant="h5">
+                    Login
+                </Typography>
 
-            <div className="bg-white relative lg:py-20">
-                <div className="flex flex-col items-center justify-between pt-0 pr-10 pb-0 pl-10 mt-0 mr-auto mb-0 ml-auto max-w-7xl
-      xl:px-5 lg:flex-row">
-                    <div className="flex flex-col items-center w-full pt-5 pr-8 pb-20 pl-8 lg:pt-20 lg:flex-row">
-                        <div className="w-full bg-cover relative max-w-md lg:max-w-2xl lg:w-7/12">
-                            <div className="flex flex-col items-center justify-center w-full h-full relative lg:pr-10">
-                                <img src="https://res.cloudinary.com/macxenon/image/upload/v1631570592/Run_-_Health_qcghbu.png" className="btn-" />
-                            </div>
-                        </div>
-                        <div className="w-full mt-20 mr-0 mb-0 ml-0 relative z-10 max-w-2xl lg:mt-0 lg:w-5/12">
-                            <div className="flex flex-col items-start justify-start pt-10 pr-10 pb-10 pl-10 bg-white shadow-2xl rounded-xl
-            relative z-10">
-                                <p className="w-full text-xl font-medium text-center leading-snug font-serif">Iniciar sesión Mesero</p>
-                                <div className="w-full mt-6 mr-0 mb-0 ml-0 relative space-y-8">
-                                    <div className="relative">
-
-                                        <Controller
-                                            name="user"
-                                            control={control}
-                                            defaultValue=""
-                                            rules={{ required: 'El usuario es requerido' }}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    label="Usuario"
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    size='small'
-                                                    error={!!errors.user}
-                                                    helperText={errors.user ? errors.user.message : ''}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <Controller
-                                            name="password"
-                                            control={control}
-                                            defaultValue=""
-                                            rules={{ required: 'la contraseña es requerida' }}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    label="Contraseña"
-                                                    variant="outlined"
-                                                    fullWidth
-                                                    size='small'
-                                                    type='password'
-                                                    error={!!errors.password}
-                                                    helperText={errors.password ? errors.password.message : ''}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={!isValid}
-                                        fullWidth
-                                    >
-                                        Aceptar
-                                    </Button>
-
-                                    {
-                                        meseroLogin == false && (
-                                            <div className='flex bg-red-100'>
-                                                <Close color='error' />
-                                                <span className='text-red-600'>Credenciales incorrectas</span>
-                                            </div>
-
-                                        )
-                                    }
-
-
-                                </div>
-                            </div>
-                            <svg className="absolute top-0 left-0 z-0 w-32 h-32 -mt-12 -ml-12 text-yellow-300
-            fill-current"><g stroke="none"  ><g ><g><g><circle
-                                    cx="3.261" cy="3.445" r="2.72" /><circle cx="15.296" cy="3.445" r="2.719" /><circle cx="27.333" cy="3.445"
-                                        r="2.72" /><circle cx="39.369" cy="3.445" r="2.72" /><circle cx="51.405" cy="3.445" r="2.72" /><circle cx="63.441"
-                                            cy="3.445" r="2.72" /><circle cx="75.479" cy="3.445" r="2.72" /><circle cx="87.514" cy="3.445" r="2.719" /></g><g
-                                                transform="translate(0 12)"><circle cx="3.261" cy="3.525" r="2.72" /><circle cx="15.296" cy="3.525"
-                                                    r="2.719" /><circle cx="27.333" cy="3.525" r="2.72" /><circle cx="39.369" cy="3.525" r="2.72" /><circle
-                                            cx="51.405" cy="3.525" r="2.72" /><circle cx="63.441" cy="3.525" r="2.72" /><circle cx="75.479" cy="3.525"
-                                                r="2.72" /><circle cx="87.514" cy="3.525" r="2.719" /></g><g transform="translate(0 24)"><circle cx="3.261"
-                                                    cy="3.605" r="2.72" /><circle cx="15.296" cy="3.605" r="2.719" /><circle cx="27.333" cy="3.605" r="2.72" /><circle
-                                            cx="39.369" cy="3.605" r="2.72" /><circle cx="51.405" cy="3.605" r="2.72" /><circle cx="63.441" cy="3.605"
-                                                r="2.72" /><circle cx="75.479" cy="3.605" r="2.72" /><circle cx="87.514" cy="3.605" r="2.719" /></g><g
-                                                    transform="translate(0 36)"><circle cx="3.261" cy="3.686" r="2.72" /><circle cx="15.296" cy="3.686"
-                                                        r="2.719" /><circle cx="27.333" cy="3.686" r="2.72" /><circle cx="39.369" cy="3.686" r="2.72" /><circle
-                                            cx="51.405" cy="3.686" r="2.72" /><circle cx="63.441" cy="3.686" r="2.72" /><circle cx="75.479" cy="3.686"
-                                                r="2.72" /><circle cx="87.514" cy="3.686" r="2.719" /></g><g transform="translate(0 49)"><circle cx="3.261"
-                                                    cy="2.767" r="2.72" /><circle cx="15.296" cy="2.767" r="2.719" /><circle cx="27.333" cy="2.767" r="2.72" /><circle
-                                            cx="39.369" cy="2.767" r="2.72" /><circle cx="51.405" cy="2.767" r="2.72" /><circle cx="63.441" cy="2.767"
-                                                r="2.72" /><circle cx="75.479" cy="2.767" r="2.72" /><circle cx="87.514" cy="2.767" r="2.719" /></g><g
-                                                    transform="translate(0 61)"><circle cx="3.261" cy="2.846" r="2.72" /><circle cx="15.296" cy="2.846"
-                                                        r="2.719" /><circle cx="27.333" cy="2.846" r="2.72" /><circle cx="39.369" cy="2.846" r="2.72" /><circle
-                                            cx="51.405" cy="2.846" r="2.72" /><circle cx="63.441" cy="2.846" r="2.72" /><circle cx="75.479" cy="2.846"
-                                                r="2.72" /><circle cx="87.514" cy="2.846" r="2.719" /></g><g transform="translate(0 73)"><circle cx="3.261"
-                                                    cy="2.926" r="2.72" /><circle cx="15.296" cy="2.926" r="2.719" /><circle cx="27.333" cy="2.926" r="2.72" /><circle
-                                            cx="39.369" cy="2.926" r="2.72" /><circle cx="51.405" cy="2.926" r="2.72" /><circle cx="63.441" cy="2.926"
-                                                r="2.72" /><circle cx="75.479" cy="2.926" r="2.72" /><circle cx="87.514" cy="2.926" r="2.719" /></g><g
-                                                    transform="translate(0 85)"><circle cx="3.261" cy="3.006" r="2.72" /><circle cx="15.296" cy="3.006"
-                                                        r="2.719" /><circle cx="27.333" cy="3.006" r="2.72" /><circle cx="39.369" cy="3.006" r="2.72" /><circle
-                                            cx="51.405" cy="3.006" r="2.72" /><circle cx="63.441" cy="3.006" r="2.72" /><circle cx="75.479" cy="3.006"
-                                                r="2.72" /><circle cx="87.514" cy="3.006" r="2.719" /></g></g></g></g></svg>
-                            <svg className="absolute bottom-0 right-0 z-0 w-32 h-32 -mb-12 -mr-12 text-indigo-500
-            fill-current"><g stroke="none" ><g ><g><g><circle
-                                    cx="3.261" cy="3.445" r="2.72" /><circle cx="15.296" cy="3.445" r="2.719" /><circle cx="27.333" cy="3.445"
-                                        r="2.72" /><circle cx="39.369" cy="3.445" r="2.72" /><circle cx="51.405" cy="3.445" r="2.72" /><circle cx="63.441"
-                                            cy="3.445" r="2.72" /><circle cx="75.479" cy="3.445" r="2.72" /><circle cx="87.514" cy="3.445" r="2.719" /></g><g
-                                                transform="translate(0 12)"><circle cx="3.261" cy="3.525" r="2.72" /><circle cx="15.296" cy="3.525"
-                                                    r="2.719" /><circle cx="27.333" cy="3.525" r="2.72" /><circle cx="39.369" cy="3.525" r="2.72" /><circle
-                                            cx="51.405" cy="3.525" r="2.72" /><circle cx="63.441" cy="3.525" r="2.72" /><circle cx="75.479" cy="3.525"
-                                                r="2.72" /><circle cx="87.514" cy="3.525" r="2.719" /></g><g transform="translate(0 24)"><circle cx="3.261"
-                                                    cy="3.605" r="2.72" /><circle cx="15.296" cy="3.605" r="2.719" /><circle cx="27.333" cy="3.605" r="2.72" /><circle
-                                            cx="39.369" cy="3.605" r="2.72" /><circle cx="51.405" cy="3.605" r="2.72" /><circle cx="63.441" cy="3.605"
-                                                r="2.72" /><circle cx="75.479" cy="3.605" r="2.72" /><circle cx="87.514" cy="3.605" r="2.719" /></g><g
-                                                    transform="translate(0 36)"><circle cx="3.261" cy="3.686" r="2.72" /><circle cx="15.296" cy="3.686"
-                                                        r="2.719" /><circle cx="27.333" cy="3.686" r="2.72" /><circle cx="39.369" cy="3.686" r="2.72" /><circle
-                                            cx="51.405" cy="3.686" r="2.72" /><circle cx="63.441" cy="3.686" r="2.72" /><circle cx="75.479" cy="3.686"
-                                                r="2.72" /><circle cx="87.514" cy="3.686" r="2.719" /></g><g transform="translate(0 49)"><circle cx="3.261"
-                                                    cy="2.767" r="2.72" /><circle cx="15.296" cy="2.767" r="2.719" /><circle cx="27.333" cy="2.767" r="2.72" /><circle
-                                            cx="39.369" cy="2.767" r="2.72" /><circle cx="51.405" cy="2.767" r="2.72" /><circle cx="63.441" cy="2.767"
-                                                r="2.72" /><circle cx="75.479" cy="2.767" r="2.72" /><circle cx="87.514" cy="2.767" r="2.719" /></g><g
-                                                    transform="translate(0 61)"><circle cx="3.261" cy="2.846" r="2.72" /><circle cx="15.296" cy="2.846"
-                                                        r="2.719" /><circle cx="27.333" cy="2.846" r="2.72" /><circle cx="39.369" cy="2.846" r="2.72" /><circle
-                                            cx="51.405" cy="2.846" r="2.72" /><circle cx="63.441" cy="2.846" r="2.72" /><circle cx="75.479" cy="2.846"
-                                                r="2.72" /><circle cx="87.514" cy="2.846" r="2.719" /></g><g transform="translate(0 73)"><circle cx="3.261"
-                                                    cy="2.926" r="2.72" /><circle cx="15.296" cy="2.926" r="2.719" /><circle cx="27.333" cy="2.926" r="2.72" /><circle
-                                            cx="39.369" cy="2.926" r="2.72" /><circle cx="51.405" cy="2.926" r="2.72" /><circle cx="63.441" cy="2.926"
-                                                r="2.72" /><circle cx="75.479" cy="2.926" r="2.72" /><circle cx="87.514" cy="2.926" r="2.719" /></g><g
-                                                    transform="translate(0 85)"><circle cx="3.261" cy="3.006" r="2.72" /><circle cx="15.296" cy="3.006"
-                                                        r="2.719" /><circle cx="27.333" cy="3.006" r="2.72" /><circle cx="39.369" cy="3.006" r="2.72" /><circle
-                                            cx="51.405" cy="3.006" r="2.72" /><circle cx="63.441" cy="3.006" r="2.72" /><circle cx="75.479" cy="3.006"
-                                                r="2.72" /><circle cx="87.514" cy="3.006" r="2.719" /></g></g></g></g></svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            {/* <Paper elevation={3} sx={{ display: 'flex', flexDirection: 'column', gap: 2, margin: 'auto', justifyContent: 'center', padding: '40px' }}>
-
-
-                <Typography variant='h4'>Regístrate</Typography>
-
-
-                <Controller
-                    name="user"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'El usuario es requerido' }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="First Name"
-                            variant="outlined"
-                            size='small'
-                            error={!!errors.user}
-                            helperText={errors.user ? errors.user.message : ''}
+                <>
+                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
+                        <Controller
+                            name="email"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                                required: 'Email is required',
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: "Invalid email address"
+                                }
+                            }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    autoComplete="email"
+                                    autoFocus
+                                    error={!!errors.email}
+                                    helperText={errors.email?.message}
+                                />
+                            )}
                         />
-                    )}
-                />
-
-                <Controller
-                    name="password"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'la contraseña es requerida' }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Last Name"
-                            variant="outlined"
-                            size='small'
-                            error={!!errors.password}
-                            helperText={errors.password ? errors.password.message : ''}
+                        <Controller
+                            name="password"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                                required: 'Password is required',
+                                minLength: {
+                                    value: 6,
+                                    message: 'Password must be at least 6 characters'
+                                }
+                            }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    error={!!errors.password}
+                                    helperText={errors.password?.message}
+                                />
+                            )}
                         />
-                    )}
-                />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Sign In
+                        </Button>
+                    </Box>
 
+                    <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2, mb: 2 }}>
+                        OR
+                    </Typography>
 
+                    <GoogleLogin
+                        clientId={clientID}
+                        onSuccess={onGoogleSuccess}
+                        onFailure={onGoogleFailure}
+                        buttonText="Continue with Google"
+                        cookiePolicy={"single_host_origin"}
+                    />
+                </>
 
-                <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
-                    Submit
-                </Button>
-            </Paper> */}
-        </form>
+                {error && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+            </Box>
+        </Container>
     );
-};
-
+}
