@@ -93,8 +93,6 @@ export const MainDrawer = () => {
         setSelectedMenu(menu);
     };
 
-    console.log(seccionesMenu);
-
     return (
         <>
             {!online ? (

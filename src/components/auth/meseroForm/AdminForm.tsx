@@ -21,11 +21,11 @@ interface FormInputs {
 }
 
 
-export function MeseroForm() {
+export function AdminForm() {
     const clientID = import.meta.env.VITE_OAUTH_ID_CLIENT;
     const navigate = useNavigate();
 
-    const { checkMesero, meseroLogin } = useAuthStore();
+    const { adminLogin, checkAdmin } = useAuthStore();
 
     const [user, setUser] = useState<ProfileObj | undefined>();
     const [error, setError] = useState("");
@@ -36,7 +36,7 @@ export function MeseroForm() {
         console.log(response);
         if ('profileObj' in response) {
             setUser(response.profileObj);
-            checkMesero(response.profileObj.email);
+            checkAdmin(response.profileObj.email);
         }
     };
 
@@ -57,7 +57,7 @@ export function MeseroForm() {
             givenName: "",
             familyName: ""
         });
-        checkMesero(data.email);
+        checkAdmin(data.email);
     };
 
     useEffect(() => {
@@ -72,12 +72,10 @@ export function MeseroForm() {
     }, []);
 
     useEffect(() => {
-        if (meseroLogin) {
-            navigate('/mesas');
-        } else if (user) {
-            setError("No tienes permisos de mesero.");
+        if (user) {
+            setError("No tienes permisos de administrador.");
         }
-    }, [meseroLogin, user, navigate]);
+    }, [user]);
 
     return (
         <Container component="main" sx={{ height: '100vh', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -94,7 +92,7 @@ export function MeseroForm() {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Registro | Mesero
+                        Registro | Admin
                     </Typography>
 
                     <>
