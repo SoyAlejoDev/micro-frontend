@@ -50,6 +50,7 @@ export function MeseroForm() {
     };
 
     const onSubmit = (data: FormInputs) => {
+
         // Aquí deberías implementar la lógica de autenticación con tu backend
         // Por ahora, solo verificamos si el email está en el array de meseros
         setUser({

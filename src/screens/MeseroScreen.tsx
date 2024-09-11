@@ -13,7 +13,9 @@ export const Mesero = () => {
 
     return (
         <div>
-            <MeseroForm />
+            {
+                (meseroLogin ? <Navigate to={'/mesas'} /> : <MeseroForm />)
+            }
 
         </div>
     );
