@@ -33,7 +33,7 @@ export function MeseroForm() {
     const { control, handleSubmit, formState: { errors } } = useForm<FormInputs>();
 
     const onGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        console.log(response);
+        // console.log(response);
         if ('profileObj' in response) {
             setUser(response.profileObj);
             checkMesero(response.profileObj.email);

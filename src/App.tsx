@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { useSocketStore } from './store/useSocketStore';
-import { AdminScreen, Cocina, Menu, Mesero } from './screens';
 import { Mesas } from './components/mesas/Mesas';
+import { AdminScreen, Cocina, Menu, Mesero } from './screens';
+import { useSocketStore } from './store/useSocketStore';
 import { MeseroContainer } from './views/meseroView/MeseroContainer';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
 

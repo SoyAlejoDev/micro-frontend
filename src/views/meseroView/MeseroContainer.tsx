@@ -44,7 +44,6 @@ export const MeseroContainer = () => {
 
   }, [pathname, ordersByTable]);
 
-
   return (
     <Container >
       {

@@ -1,35 +1,22 @@
-interface Item {
-    id: number;
-    nombre: string;
-    cantidad: number;
-    precio: number;
-}
+import { OrderItem } from '../types'; // Asegúrate de que la ruta de importación sea correcta
 
-interface Menu {
-    [key: string]: Item[];
-}
+export const calcularTotalPorMesa = (
+    tableId: string,
+    ordersByTable: Record<number, Record<string, OrderItem[]>>
+): number => {
+    const tableIdNumber = Number(tableId);
+    const ordersForTable = ordersByTable[tableIdNumber];
 
-interface MesaData {
-    [key: string]: Menu;
-}
-
-export const calcularTotalPorMesa = (idMesa: string, data: MesaData): number => {
-    const mesa = data[idMesa];
-    if (!mesa) {
-        console.error(`No se encontró la mesa con id ${idMesa}`);
+    if (!ordersForTable) {
         return 0;
     }
 
-    const secciones = ['Entrantes', 'Bebidas', 'Comidas', 'Agregados', 'Pizzas', 'Postres'];
     let total = 0;
 
-    secciones.forEach(seccion => {
-        const items = mesa[seccion];
-        if (items) {
-            items.forEach(item => {
-                total += item.precio * item.cantidad;
-            });
-        }
+    Object.values(ordersForTable).forEach((categoryItems) => {
+        categoryItems.forEach((item) => {
+            total += item.precio * item.cantidad;
+        });
     });
 
     return total;

@@ -26,15 +26,25 @@ export const useSocketStore = create<SocketStateData & OrderState & SocketState>
 	ordersByTable: {},
 
 	connectSocket: () => {
-		const socket = io(import.meta.env.VITE_URL_SOCKET, {
-			transports: ["websocket"],
+		const socket = io("http://localhost:3000", {
+			transports: ["websocket", "polling"],
+			reconnection: true,
+			reconnectionAttempts: 5,
+			reconnectionDelay: 1000,
+		});
+
+		socket.on("connect_error", error => {
+			console.error("Connection error:", error);
+			set({online: false});
 		});
 
 		socket.on("connect", () => {
+			console.log("Connected to server");
 			set({online: true});
 		});
 
-		socket.on("disconnect", () => {
+		socket.on("disconnect", reason => {
+			console.log("Disconnected:", reason);
 			set({online: false});
 		});
 
@@ -54,8 +64,20 @@ export const useSocketStore = create<SocketStateData & OrderState & SocketState>
 	disconnectSocket: () => {
 		const {socket} = get();
 		if (socket) {
-			socket.disconnect();
+			// Verificar el estado del socket antes de intentar desconectar
+			if (socket.connected) {
+				socket.disconnect();
+			} else {
+				console.log("Socket ya desconectado o aún no conectado");
+			}
+
+			// Limpiar los listeners para evitar memory leaks
+			socket.removeAllListeners();
+
+			// Actualizar el estado
 			set({online: false, socket: null, socketData: null});
+		} else {
+			console.log("No hay socket para desconectar");
 		}
 	},
 
