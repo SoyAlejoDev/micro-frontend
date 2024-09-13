@@ -9,7 +9,7 @@ export const AdminScreen = () => {
     return (
         <div>
             {
-                (adminLogin ? <AdminDashboard /> : <AdminForm />)
+                (true ? <AdminDashboard /> : <AdminForm />)
             }
 
         </div>

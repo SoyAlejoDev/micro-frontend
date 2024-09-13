@@ -92,7 +92,7 @@ export function AdminForm() {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Registro | Admin
+                        Registro | Administrador
                     </Typography>
 
                     <>

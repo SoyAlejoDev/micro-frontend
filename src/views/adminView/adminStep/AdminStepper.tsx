@@ -54,17 +54,17 @@ export const AdminStepper = () => {
     const isNextButtonDisabled = () => {
         switch (activeStep) {
             case 0:
-                return !formMainData;
-            // return false;
+                // return !formMainData;
+                return false;
             case 1:
-                return !historyFormData;
-            // return false;
+                // return !historyFormData;
+                return false;
             case 2:
-                return !descriptionFormData;
-            // return false;
+                // return !descriptionFormData;
+                return false;
             case 3:
-                return !footerFormData;
-            // return false;
+                // return !footerFormData;
+                return false;
             default:
                 return false;
         }
