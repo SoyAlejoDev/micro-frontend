@@ -1,7 +1,7 @@
 import { Add, AddCircle, DeleteOutline, ExpandMore, Send, Verified } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Button, FormControlLabel, Grid, IconButton, Paper, Switch, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { default as swal } from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 import { ImageUploader } from '../../../components/imageUploader/ImageUploader';
@@ -59,17 +59,38 @@ interface MenuSection {
 
 export const MenuAdmin: React.FC = () => {
     const [sections, setSections] = useState<MenuSection[]>([]);
+    const [checkedSections, setCheckedSections] = useState<MenuSection[]>([]);
+    const [isChecked, setIsChecked] = useState(false);
     const [newSectionName, setNewSectionName] = useState<string>('');
 
     const { setMenuSections, menuSections, removeMenuSections } = useAdminStore();
     const { socket } = useSocketStore();
 
-    // Load sections from global state (menuSections) when component mounts
     useEffect(() => {
         if (menuSections.length > 0) {
             setSections(menuSections);
         }
     }, [menuSections]);
+
+    const compareWithChecked = useCallback(() => {
+        if (!isChecked) return;
+
+        const isEqual = _.isEqual(sections, checkedSections);
+        if (!isEqual) {
+            swal.fire('Atención', 'Se han detectado cambios desde la última comprobación. Por favor, vuelva a comprobar antes de enviar.', 'warning');
+            setIsChecked(false);
+        }
+    }, [isChecked, sections, checkedSections]);
+
+    useEffect(() => {
+        if (isChecked) {
+            compareWithChecked();
+        }
+    }, [sections, isChecked, compareWithChecked]);
+
+    const handleSectionChange = useCallback((updatedSections: MenuSection[]) => {
+        setSections(updatedSections);
+    }, []);
 
     const handleAddSection = () => {
         if (newSectionName.trim() === '') return;
@@ -80,7 +101,7 @@ export const MenuAdmin: React.FC = () => {
             items: [],
         };
 
-        setSections([...sections, newSection]);
+        handleSectionChange([...sections, newSection]);
         setNewSectionName('');
     };
 
@@ -94,62 +115,55 @@ export const MenuAdmin: React.FC = () => {
             habilitado: true,
         };
 
-        setSections((prevSections) =>
-            prevSections.map((section) =>
-                section.id === sectionId
-                    ? { ...section, items: [...section.items, newItem] }
-                    : section
-            )
+        const updatedSections = sections.map((section) =>
+            section.id === sectionId
+                ? { ...section, items: [...section.items, newItem] }
+                : section
         );
+
+        handleSectionChange(updatedSections);
     };
 
     const handleDeleteItem = (sectionId: string, itemId: string) => {
-        setSections((prevSections) =>
-            prevSections.map((section) =>
-                section.id === sectionId
-                    ? { ...section, items: section.items.filter((item) => item.id !== itemId) }
-                    : section
-            )
+        const updatedSections = sections.map((section) =>
+            section.id === sectionId
+                ? { ...section, items: section.items.filter((item) => item.id !== itemId) }
+                : section
         );
+
+        handleSectionChange(updatedSections);
     };
 
     const handleDeleteSection = (sectionId: string) => {
-        setSections((prevSections) => prevSections.filter((section) => section.id !== sectionId));
+        const updatedSections = sections.filter((section) => section.id !== sectionId);
+        handleSectionChange(updatedSections);
     };
 
     const handleFileBase64Change = (sectionId: string, itemId: string, base64: string | null) => {
-        setSections((prevSections) =>
-            prevSections.map((section) =>
-                section.id === sectionId
-                    ? {
-                        ...section,
-                        items: section.items.map((item) =>
-                            item.id === itemId ? { ...item, foto: base64 || '' } : item
-                        ),
-                    }
-                    : section
-            )
+        const updatedSections = sections.map((section) =>
+            section.id === sectionId
+                ? {
+                    ...section,
+                    items: section.items.map((item) =>
+                        item.id === itemId ? { ...item, foto: base64 || '' } : item
+                    ),
+                }
+                : section
         );
+
+        handleSectionChange(updatedSections);
     };
 
     const handleAccept = () => {
         const hasEmptySections = sections.some((section) => section.items.length === 0);
 
         if (sections.length === 0) {
-            swal.fire(
-                'Error',
-                'No hay datos para gestionar',
-                'error'
-            );
+            swal.fire('Error', 'No hay datos para gestionar', 'error');
             return;
         }
 
         if (hasEmptySections) {
-            swal.fire(
-                'No tan rápido',
-                'Todas las secciones deben tener al menos un ítem',
-                'error'
-            );
+            swal.fire('No tan rápido', 'Todas las secciones deben tener al menos un ítem', 'error');
             return;
         }
 
@@ -158,33 +172,32 @@ export const MenuAdmin: React.FC = () => {
         );
 
         if (hasIncompleteItems) {
-            swal.fire(
-                'No tan rápido',
-                'Hay campos que faltan por completar',
-                'error'
-            );
+            swal.fire('No tan rápido', 'Hay campos que faltan por completar', 'error');
             return;
         }
-        console.log(sections);
-        setMenuSections(sections); // Update global state with sections
+
+        setCheckedSections(_.cloneDeep(sections));
+        setIsChecked(true);
+        setMenuSections(sections);
+        swal.fire('Éxito', 'Los datos han sido comprobados correctamente', 'success');
     };
-
-
 
     const sendData = () => {
+        if (!isChecked) {
+            swal.fire('Error', 'Por favor, compruebe los datos antes de enviar', 'error');
+            return;
+        }
         socket.emit('data-admin', sections);
+        swal.fire('Éxito', 'Los datos han sido enviados correctamente', 'success');
     };
 
-
     return (
-        <Paper elevation={3} sx={{ height: '95%', margin: '6px 16px' }}>
+        <Paper elevation={3} sx={{ minHeight: '30%', margin: '6px 16px' }}>
             <div style={{ margin: '6px 16px', height: '100%' }}>
                 <div style={{ padding: "24px 0px", textAlign: 'center' }}>
                     <div className='flex items-center gap-3'>
                         <Typography variant="h6" sx={{ margin: 0 }}>Gestión de Menú</Typography>
-                        {
-                            menuSections.length != 0 && <Verified color='success' />
-                        }
+                        {isChecked && <Verified color='success' />}
                     </div>
                 </div>
                 <Grid container spacing={2} alignItems="center">
@@ -229,7 +242,6 @@ export const MenuAdmin: React.FC = () => {
                                 startIcon={<AddCircle />}
                                 onClick={() => handleAddItem(section.id)}
                                 style={{ marginBottom: 10, textTransform: 'none' }}
-
                             >
                                 Agregar Opción
                             </Button>
@@ -245,20 +257,19 @@ export const MenuAdmin: React.FC = () => {
                                                     fullWidth
                                                     size='small'
                                                     value={item.nombre}
-                                                    onChange={(e) =>
-                                                        setSections((prevSections) =>
-                                                            prevSections.map((sec) =>
-                                                                sec.id === section.id
-                                                                    ? {
-                                                                        ...sec,
-                                                                        items: sec.items.map((it) =>
-                                                                            it.id === item.id ? { ...it, nombre: e.target.value } : it
-                                                                        ),
-                                                                    }
-                                                                    : sec
-                                                            )
-                                                        )
-                                                    }
+                                                    onChange={(e) => {
+                                                        const updatedSections = sections.map((sec) =>
+                                                            sec.id === section.id
+                                                                ? {
+                                                                    ...sec,
+                                                                    items: sec.items.map((it) =>
+                                                                        it.id === item.id ? { ...it, nombre: e.target.value } : it
+                                                                    ),
+                                                                }
+                                                                : sec
+                                                        );
+                                                        handleSectionChange(updatedSections);
+                                                    }}
                                                     style={{ marginBottom: 10 }}
                                                 />
                                                 <TextField
@@ -268,20 +279,19 @@ export const MenuAdmin: React.FC = () => {
                                                     sx={{ maxWidth: '100px' }}
                                                     size='small'
                                                     value={item.precio}
-                                                    onChange={(e) =>
-                                                        setSections((prevSections) =>
-                                                            prevSections.map((sec) =>
-                                                                sec.id === section.id
-                                                                    ? {
-                                                                        ...sec,
-                                                                        items: sec.items.map((it) =>
-                                                                            it.id === item.id ? { ...it, precio: parseFloat(e.target.value) } : it
-                                                                        ),
-                                                                    }
-                                                                    : sec
-                                                            )
-                                                        )
-                                                    }
+                                                    onChange={(e) => {
+                                                        const updatedSections = sections.map((sec) =>
+                                                            sec.id === section.id
+                                                                ? {
+                                                                    ...sec,
+                                                                    items: sec.items.map((it) =>
+                                                                        it.id === item.id ? { ...it, precio: parseFloat(e.target.value) } : it
+                                                                    ),
+                                                                }
+                                                                : sec
+                                                        );
+                                                        handleSectionChange(updatedSections);
+                                                    }}
                                                     style={{ marginBottom: 10 }}
                                                 />
                                             </div>
@@ -293,20 +303,19 @@ export const MenuAdmin: React.FC = () => {
                                                 multiline
                                                 rows={2}
                                                 value={item.descripcion}
-                                                onChange={(e) =>
-                                                    setSections((prevSections) =>
-                                                        prevSections.map((sec) =>
-                                                            sec.id === section.id
-                                                                ? {
-                                                                    ...sec,
-                                                                    items: sec.items.map((it) =>
-                                                                        it.id === item.id ? { ...it, descripcion: e.target.value } : it
-                                                                    ),
-                                                                }
-                                                                : sec
-                                                        )
-                                                    )
-                                                }
+                                                onChange={(e) => {
+                                                    const updatedSections = sections.map((sec) =>
+                                                        sec.id === section.id
+                                                            ? {
+                                                                ...sec,
+                                                                items: sec.items.map((it) =>
+                                                                    it.id === item.id ? { ...it, descripcion: e.target.value } : it
+                                                                ),
+                                                            }
+                                                            : sec
+                                                    );
+                                                    handleSectionChange(updatedSections);
+                                                }}
                                                 style={{ marginBottom: 10 }}
                                             />
 
@@ -316,24 +325,22 @@ export const MenuAdmin: React.FC = () => {
                                             />
                                             <div className='flex justify-between mt-3'>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-
                                                     <FormControlLabel
                                                         control={<Android12Switch defaultChecked />}
                                                         label="Habilitado"
-                                                        onChange={(e) =>
-                                                            setSections((prevSections) =>
-                                                                prevSections.map((sec) =>
-                                                                    sec.id === section.id
-                                                                        ? {
-                                                                            ...sec,
-                                                                            items: sec.items.map((it) =>
-                                                                                it.id === item.id ? { ...it, habilitado: e.target.checked } : it
-                                                                            ),
-                                                                        }
-                                                                        : sec
-                                                                )
-                                                            )
-                                                        }
+                                                        onChange={(e) => {
+                                                            const updatedSections = sections.map((sec) =>
+                                                                sec.id === section.id
+                                                                    ? {
+                                                                        ...sec,
+                                                                        items: sec.items.map((it) =>
+                                                                            it.id === item.id ? { ...it, habilitado: e.target.checked } : it
+                                                                        ),
+                                                                    }
+                                                                    : sec
+                                                            );
+                                                            handleSectionChange(updatedSections);
+                                                        }}
                                                     />
                                                 </div>
 
@@ -351,24 +358,28 @@ export const MenuAdmin: React.FC = () => {
                         </AccordionDetails>
                     </Accordion>
                 ))}
+            </div>
 
+            <div className='flex justify-end p-4 gap-5'>
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleAccept}
-                    style={{ marginTop: 20 }}
                     sx={{ textTransform: 'none' }}
                     startIcon={<Verified />}
                 >
                     Comprobar
                 </Button>
-            </div>
-            <Button
-                onClick={sendData}
-                startIcon={<Send />}
-                variant='outlined'
-            >Enviar</Button>
 
+                <Button
+                    onClick={sendData}
+                    startIcon={<Send />}
+                    variant='outlined'
+                    disabled={!isChecked}
+                >
+                    Enviar
+                </Button>
+            </div>
         </Paper>
     );
 };

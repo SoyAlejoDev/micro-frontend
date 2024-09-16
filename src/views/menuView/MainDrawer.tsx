@@ -76,6 +76,8 @@ export const MainDrawer = () => {
 
     const { socketData, online } = useSocketStore();
 
+    console.log(socketData);
+
     //? Sacar del menu el arreglo de secciones del menu
     const seccionesMenu = socketData?.new_data_menu?.map(item => item.nombre) ?? [];
     seccionesMenu.unshift("Inicio");
