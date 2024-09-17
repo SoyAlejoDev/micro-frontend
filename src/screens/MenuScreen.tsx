@@ -1,3 +1,4 @@
+import { Box, Skeleton, Typography } from '@mui/material';
 import { Loading } from '../components/loading/Loading';
 import { useSocketStore } from '../store/useSocketStore';
 import { MainDrawer } from '../views/menuView/MainDrawer';
@@ -11,28 +12,50 @@ export const Menu = () => {
 
     if (!socketData) {
         return (
-            <div className="bg-gray-900 min-h-screen">
-                {/* AppBar Skeleton */}
-                <div className="h-16 bg-gray-800 animate-pulse"></div>
-
-                <div className="flex">
-                    {/* Drawer Skeleton */}
-                    <div className="w-60 h-screen bg-gray-800 animate-pulse hidden lg:block">
-                        <div className="h-16 bg-gray-700 mb-4"></div>
-                        {[...Array(6)].map((_, index) => (
-                            <div key={index} className="h-10 bg-gray-700 mb-2 mx-4 rounded"></div>
-                        ))}
-                    </div>
-
-                    {/* Main Content Skeleton */}
-                    <div className="flex-1 p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {[...Array(6)].map((_, index) => (
-                                <div key={index} className="bg-gray-800 h-48 rounded-lg animate-pulse"></div>
-                            ))}
-                        </div>
-                    </div>
+            <div className="min-h-screen">
+                <Skeleton variant="rectangular" width={'100%'} height={60} />
+                <div
+                    style={{ paddingTop: '80px', width: '100%', height: '60vh' }}
+                >
+                    <Typography variant='h1' sx={{ mx: 3 }}> <Skeleton /></Typography>
+                    <Typography variant='h5' sx={{ mx: 3 }}> <Skeleton /></Typography>
+                    <Typography variant='h5' sx={{ mx: 3 }}> <Skeleton /></Typography>
                 </div>
+                <Skeleton
+                    sx={{ marginTop: '10px', display: 'flex' }}
+                    variant="rectangular" width={'100%'} height={'40vh'}
+                >
+                </Skeleton>
+                {
+                    Array.from({ length: 3 }).map((_, index) => (
+                        <div className='flex items-center justify-center mt-14' key={index}>
+                            <Box sx={{ width: '90%', height: 150, position: 'relative', bgcolor: 'grey.200', borderRadius: 2 }}>
+                                {/* Círculo dividido en la parte superior */}
+                                <Box sx={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)' }}>
+                                    <Box sx={{ width: 100, height: 100, borderRadius: '50%', overflow: 'hidden' }}>
+                                        <Skeleton variant="circular" width={100} height={100} sx={{ bgcolor: 'grey.300' }} />
+                                        <Box sx={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', bgcolor: 'grey.400' }} />
+                                    </Box>
+                                </Box>
+
+                                {/* Contenido del rectángulo */}
+                                <Box sx={{ pt: 4, px: 2 }}>
+                                    <Skeleton variant="text" sx={{ fontSize: '2rem', mb: 1 }} /> {/* Título */}
+                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} /> {/* Subtítulo */}
+                                </Box>
+                            </Box>
+                        </div>
+                    ))
+                }
+                <Skeleton
+                    sx={{ marginTop: '10px', display: 'flex' }}
+                    variant="rectangular" width={'100%'} height={'30vh'}
+                >
+                </Skeleton>
+
+
+
+
             </div>
         );
     }
