@@ -54,7 +54,7 @@ export const MeseroContainer = () => {
                 <Paper
                   elevation={3}
                   key={index}
-                  className='w-[120px] p-2 flex justify-center'
+                  className='w-[120px] p-2 flex justify-center items-center text-center'
                   onClick={() => handleMenuClick(item)}
                   style={{ backgroundColor: item === selectedMenu ? '#1976d2' : 'transparent' }}
                 >

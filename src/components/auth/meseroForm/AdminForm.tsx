@@ -1,18 +1,17 @@
+import { Google } from '@mui/icons-material';
 import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
-import { gapi } from "gapi-script";
-import { useEffect, useState } from "react";
-import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from "react-hook-form";
-import { useAuthStore } from "../../../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 interface ProfileObj {
-    googleId: string;
-    imageUrl: string;
+    sub: string;
+    picture: string;
     email: string;
     name: string;
-    givenName: string;
-    familyName: string;
+    given_name: string;
+    family_name: string;
 }
 
 interface FormInputs {
@@ -20,62 +19,72 @@ interface FormInputs {
     password: string;
 }
 
-
 export function AdminForm() {
     const clientID = import.meta.env.VITE_OAUTH_ID_CLIENT;
     const navigate = useNavigate();
 
     const { adminLogin, checkAdmin } = useAuthStore();
 
-    const [user, setUser] = useState<ProfileObj | undefined>();
+    const [user, setUser] = useState<ProfileObj | null>(null);
     const [error, setError] = useState("");
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormInputs>();
 
-    const onGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        console.log(response);
-        if ('profileObj' in response) {
-            setUser(response.profileObj);
-            checkAdmin(response.profileObj.email);
+    const handleGoogleLogin = async () => {
+        try {
+            const { google } = window as any;
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: clientID,
+                scope: 'email profile',
+                callback: async (response: any) => {
+                    if (response.access_token) {
+                        const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                            headers: { Authorization: `Bearer ${response.access_token}` },
+                        }).then(res => res.json());
+
+                        setUser(userInfo);
+                        checkAdmin(userInfo.email);
+                    }
+                },
+            });
+            client.requestAccessToken();
+        } catch (error) {
+            console.error("Google Sign In was unsuccessful. Try again later", error);
+            setError("Google Sign In failed. Please try again.");
         }
     };
 
-    const onGoogleFailure = (error: any) => {
-        console.log("Google Sign In was unsuccessful. Try again later", error);
-        setError("Google Sign In failed. Please try again.");
-    };
-
     const onSubmit = (data: FormInputs) => {
-
-        // Aquí debería implementar la lógica de autenticación con el backend
-        // Por ahora, solo verifico si el email está en el array de meseros
         setUser({
-            googleId: "",
-            imageUrl: "",
+            sub: "",
+            picture: "",
             email: data.email,
             name: data.email.split("@")[0],
-            givenName: "",
-            familyName: ""
+            given_name: "",
+            family_name: ""
         });
         checkAdmin(data.email);
     };
 
     useEffect(() => {
-        const start = () => {
-            gapi.client.init({
-                clientId: clientID,
-                scope: "",
-            });
+        const loadGoogleScript = () => {
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.defer = true;
+            document.body.appendChild(script);
         };
 
-        gapi.load("client:auth2", start);
+        loadGoogleScript();
     }, []);
 
     useEffect(() => {
-        if (user) {
+        if (adminLogin) {
+            navigate('/admin-dashboard'); // Adjust this route as needed
+        } else if (user) {
             setError("No tienes permisos de administrador.");
         }
-    }, [user]);
+    }, [adminLogin, user, navigate]);
 
     return (
         <Container component="main" sx={{ height: '100vh', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -95,85 +104,83 @@ export function AdminForm() {
                         Registro | Administrador
                     </Typography>
 
-                    <>
-                        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
-                            <Controller
-                                name="email"
-                                control={control}
-                                defaultValue=""
-                                rules={{
-                                    required: 'Email is required',
-                                    pattern: {
-                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                        message: "Invalid email address"
-                                    }
-                                }}
-                                render={({ field }) => (
-                                    <TextField
-                                        size="small"
-                                        {...field}
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        id="email"
-                                        label="Email Address"
-                                        autoComplete="email"
-                                        autoFocus
-                                        error={!!errors.email}
-                                        helperText={errors.email?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="password"
-                                control={control}
-                                defaultValue=""
-                                rules={{
-                                    required: 'Password is required',
-                                    minLength: {
-                                        value: 6,
-                                        message: 'Password must be at least 6 characters'
-                                    }
-                                }}
-                                render={({ field }) => (
-                                    <TextField
-                                        size="small"
-                                        {...field}
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        autoComplete="current-password"
-                                        error={!!errors.password}
-                                        helperText={errors.password?.message}
-                                    />
-                                )}
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                Entrar
-                            </Button>
-                        </Box>
-
-                        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2, mb: 2 }}>
-                            OR
-                        </Typography>
-
-                        <GoogleLogin
-                            clientId={clientID}
-                            onSuccess={onGoogleSuccess}
-                            onFailure={onGoogleFailure}
-                            buttonText="Continue with Google"
-                            cookiePolicy={"single_host_origin"}
+                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
+                        <Controller
+                            name="email"
+                            control={control}
+                            rules={{
+                                required: 'Email is required',
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: "Invalid email address"
+                                }
+                            }}
+                            render={({ field }) => (
+                                <TextField
+                                    size="small"
+                                    {...field}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    autoComplete="email"
+                                    autoFocus
+                                    error={!!errors.email}
+                                    helperText={errors.email?.message}
+                                />
+                            )}
                         />
-                    </>
+                        <Controller
+                            name="password"
+                            control={control}
+                            rules={{
+                                required: 'Password is required',
+                                minLength: {
+                                    value: 6,
+                                    message: 'Password must be at least 6 characters'
+                                }
+                            }}
+                            render={({ field }) => (
+                                <TextField
+                                    size="small"
+                                    {...field}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    error={!!errors.password}
+                                    helperText={errors.password?.message}
+                                />
+                            )}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Entrar
+                        </Button>
+                    </Box>
+
+                    <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2, mb: 2 }}>
+                        OR
+                    </Typography>
+
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={handleGoogleLogin}
+                        sx={{ mt: 1, mb: 2, textTransform: 'none' }}
+                        startIcon={<Google />}
+                    >
+                        Continuar con Google
+                    </Button>
 
                     {error && (
                         <Typography color="error" sx={{ mt: 2 }}>
