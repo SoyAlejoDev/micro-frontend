@@ -188,6 +188,7 @@ export const MenuAdmin: React.FC = () => {
             return;
         }
         socket.emit('data-admin', sections);
+        console.log(sections);
         swal.fire('Éxito', 'Los datos han sido enviados correctamente', 'success');
     };
 

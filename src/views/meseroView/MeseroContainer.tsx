@@ -47,7 +47,7 @@ export const MeseroContainer = () => {
   return (
     <Container >
       {
-        !online ? (<p>Loading...</p>) : (
+        !online && socketData ? (<p>Loading...</p>) : (
           <div className="flex gap-3 py-5 flex-wrap justify-around">
             {
               seccionesMenu.map((item, index) => (

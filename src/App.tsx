@@ -7,7 +7,7 @@ import { MeseroContainer } from './views/meseroView/MeseroContainer';
 
 function App() {
 
-  const { connectSocket, disconnectSocket } = useSocketStore();
+  const { connectSocket, disconnectSocket, socketData } = useSocketStore();
 
   useEffect(() => {
     connectSocket();
@@ -15,6 +15,9 @@ function App() {
       disconnectSocket();
     };
   }, [connectSocket, disconnectSocket]);
+
+
+  console.log(socketData);
 
 
   return (
