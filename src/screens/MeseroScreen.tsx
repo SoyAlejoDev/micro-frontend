@@ -9,8 +9,6 @@ export const Mesero = () => {
 
     const { meseroLogin } = useAuthStore();
 
-    // console.log(meseroLogin);
-
     return (
         <div>
             {
