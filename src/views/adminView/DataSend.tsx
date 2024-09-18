@@ -37,7 +37,7 @@ export const DataSend = () => {
                     'success'
                 );
                 console.log(resumeData);
-                socket.emit('formularios-web', resumeData);
+                socket.emit('page-data', resumeData);
                 setEnvioData(true);
             }
         });

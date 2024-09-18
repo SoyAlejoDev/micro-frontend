@@ -201,7 +201,7 @@ export const MenuAdmin: React.FC = () => {
             swal.fire('Error', 'Por favor, compruebe los datos antes de enviar', 'error');
             return;
         }
-        socket.emit('data-admin', sections);
+        socket.emit('send-item', sections);
         console.log(sections);
         saveToLocalStorage(sections);
         swal.fire('Éxito', 'Los datos han sido enviados correctamente', 'success');
