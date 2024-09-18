@@ -2,7 +2,7 @@ import { Image, Send, Verified } from '@mui/icons-material';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { useAdminStore } from '../../store/useAdminStore';
 import { useSocketStore } from '../../store/useSocketStore';
-import admin_send_data from '../../assets/admin_send_data.png';
+import admin_send_data from '../../assets/cohete.gif';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
 
@@ -23,7 +23,6 @@ export const DataSend = () => {
 
     const onClick = () => {
         Swal.fire({
-            // title: 'Are you sure?',
             text: "Estas seguro/a que quieres enviar los datos?",
             icon: 'warning',
             showCancelButton: true,
@@ -60,7 +59,7 @@ export const DataSend = () => {
                                     sx={{ textTransform: 'none' }}
                                 >Enviar Datos</Button>
                             ) : (
-                                <div className='flex gap-2'>
+                                <div className='flex gap-2 items-center'>
                                     <Typography variant='subtitle1'>Datos enviados correctamente</Typography>
                                     <Verified color='success' />
                                 </div>

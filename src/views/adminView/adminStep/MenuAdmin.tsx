@@ -66,11 +66,23 @@ export const MenuAdmin: React.FC = () => {
     const { setMenuSections, menuSections, removeMenuSections } = useAdminStore();
     const { socket } = useSocketStore();
 
+    const saveToLocalStorage = useCallback((data: MenuSection[]) => {
+        localStorage.setItem('menuAdminData', JSON.stringify(data));
+    }, []);
+
+    const loadFromLocalStorage = useCallback((): MenuSection[] | null => {
+        const data = localStorage.getItem('menuAdminData');
+        return data ? JSON.parse(data) : null;
+    }, []);
+
     useEffect(() => {
-        if (menuSections.length > 0) {
+        const localData = loadFromLocalStorage();
+        if (localData) {
+            setSections(localData);
+        } else if (menuSections.length > 0) {
             setSections(menuSections);
         }
-    }, [menuSections]);
+    }, [menuSections, loadFromLocalStorage]);
 
     const compareWithChecked = useCallback(() => {
         if (!isChecked) return;
@@ -90,7 +102,8 @@ export const MenuAdmin: React.FC = () => {
 
     const handleSectionChange = useCallback((updatedSections: MenuSection[]) => {
         setSections(updatedSections);
-    }, []);
+        saveToLocalStorage(updatedSections);
+    }, [saveToLocalStorage]);
 
     const handleAddSection = () => {
         if (newSectionName.trim() === '') return;
@@ -179,6 +192,7 @@ export const MenuAdmin: React.FC = () => {
         setCheckedSections(_.cloneDeep(sections));
         setIsChecked(true);
         setMenuSections(sections);
+        saveToLocalStorage(sections);
         swal.fire('Éxito', 'Los datos han sido comprobados correctamente', 'success');
     };
 
@@ -189,6 +203,7 @@ export const MenuAdmin: React.FC = () => {
         }
         socket.emit('data-admin', sections);
         console.log(sections);
+        saveToLocalStorage(sections);
         swal.fire('Éxito', 'Los datos han sido enviados correctamente', 'success');
     };
 
@@ -274,7 +289,7 @@ export const MenuAdmin: React.FC = () => {
                                                     style={{ marginBottom: 10 }}
                                                 />
                                                 <TextField
-                                                    label="Precio"
+                                                    label="Precio ($)"
                                                     variant="outlined"
                                                     type="number"
                                                     sx={{ maxWidth: '100px' }}
@@ -327,21 +342,25 @@ export const MenuAdmin: React.FC = () => {
                                             <div className='flex justify-between mt-3'>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                                     <FormControlLabel
-                                                        control={<Android12Switch defaultChecked />}
+                                                        control={
+                                                            <Android12Switch
+                                                                checked={item.habilitado}
+                                                                onChange={(e) => {
+                                                                    const updatedSections = sections.map((sec) =>
+                                                                        sec.id === section.id
+                                                                            ? {
+                                                                                ...sec,
+                                                                                items: sec.items.map((it) =>
+                                                                                    it.id === item.id ? { ...it, habilitado: e.target.checked } : it
+                                                                                ),
+                                                                            }
+                                                                            : sec
+                                                                    );
+                                                                    handleSectionChange(updatedSections);
+                                                                }}
+                                                            />
+                                                        }
                                                         label="Habilitado"
-                                                        onChange={(e) => {
-                                                            const updatedSections = sections.map((sec) =>
-                                                                sec.id === section.id
-                                                                    ? {
-                                                                        ...sec,
-                                                                        items: sec.items.map((it) =>
-                                                                            it.id === item.id ? { ...it, habilitado: e.target.checked } : it
-                                                                        ),
-                                                                    }
-                                                                    : sec
-                                                            );
-                                                            handleSectionChange(updatedSections);
-                                                        }}
                                                     />
                                                 </div>
 

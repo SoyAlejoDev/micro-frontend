@@ -79,7 +79,7 @@ export const MainForm = () => {
                             margin="normal"
                             autoComplete='none'
                         />
-                        <Tooltip title="Aqui va el titulo principal de la pagina web" arrow placement="top">
+                        <Tooltip title="Título principal de la página web" arrow placement="top">
                             <Help htmlColor='gray' />
                         </Tooltip>
                     </div>
@@ -95,7 +95,7 @@ export const MainForm = () => {
                             multiline
                             rows={4}
                         />
-                        <Tooltip sx={{ mt: 2 }} title="Foto para fondo de la pantalla principal" arrow placement="top">
+                        <Tooltip sx={{ mt: 2 }} title="Breve descipción del local" arrow placement="top">
                             <Help htmlColor='gray' />
                         </Tooltip>
                     </div>

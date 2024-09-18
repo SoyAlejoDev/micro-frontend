@@ -1,5 +1,5 @@
 // src/components/ImageUploader.tsx
-import { Close, Task } from '@mui/icons-material';
+import { Close, Task, TaskAlt } from '@mui/icons-material';
 import Upload from '@mui/icons-material/Upload';
 import { Box, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -82,18 +82,41 @@ export const ImageUploader = ({ setFileBase64, fileBase64 }: Props) => {
             {uploadStatus === 'success' ? (
                 <Paper elevation={3} style={{ display: 'flex', justifyContent: 'space-between', padding: '0px 6px', borderRadius: '8px', width: '100%' }}>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <Task color='primary' />
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span
-                                style={{
-                                    fontWeight: 600,
-                                    fontSize: '14px',
-                                    lineHeight: '21px',
-                                    color: '#59bef8',
-                                }}
-                            >{fileName}</span>
+                        {
+                            fileName
+                                ? (
+                                    <>
+                                        <Task color='primary' />
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <span
+                                                style={{
+                                                    fontWeight: 600,
+                                                    fontSize: '14px',
+                                                    lineHeight: '21px',
+                                                    color: '#59bef8',
+                                                }}
+                                            >{fileName}</span>
 
-                        </div>
+                                        </div>
+                                    </>
+                                )
+                                : (
+                                    <>
+                                        <TaskAlt color='primary' />
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <span
+                                                style={{
+                                                    fontWeight: 600,
+                                                    fontSize: '14px',
+                                                    lineHeight: '21px',
+                                                    color: '#59bef8',
+                                                }}
+                                            >Archivo subido</span>
+
+                                        </div>
+                                    </>
+                                )
+                        }
                     </div>
                     <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
                         <IconButton onClick={handleReset}>
