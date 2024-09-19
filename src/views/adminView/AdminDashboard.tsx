@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { AdminStepper } from './adminStep/AdminStepper';
 import { MenuAdmin } from './adminStep/MenuAdmin';
+import { ResumenDiario } from './resumenDiario/ResumenDiario';
 
 const { Header, Sider, Content } = Layout;
 
@@ -24,7 +25,7 @@ export const AdminDashboard = () => {
     const renderContent = () => {
         switch (selectedKey) {
             case '1':
-                return <div>Content for nav 1</div>;
+                return <ResumenDiario />;
             case '2':
                 return <div>Content for nav 2</div>;
             case '3':
