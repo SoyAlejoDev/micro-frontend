@@ -1,22 +1,22 @@
-import React from 'react';
 import {
     CurrencyExchange,
+    GetApp,
     Restaurant,
-    ShoppingCart,
-    GetApp
+    ShoppingCart
 } from '@mui/icons-material';
 import {
     Box,
+    Button,
     Card,
     CardContent,
     Grid,
     Paper,
-    Typography,
-    Button
+    Typography
 } from '@mui/material';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import React from 'react';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Asegúrate de que jspdf-autotable está correctamente tipado
 declare module 'jspdf' {
@@ -88,7 +88,7 @@ export const ResumenDiario: React.FC = () => {
         });
 
         // Guardar el PDF
-        doc.save(`ResumenDiarioVentas - ${new Date(resumenDiario.date).toLocaleDateString()}.pdf`);
+        doc.save(`ResumenDiarioVentas -${new Date(resumenDiario.date).toLocaleDateString()}.pdf`);
     };
 
     return (
@@ -174,7 +174,11 @@ export const ResumenDiario: React.FC = () => {
                             <BarChart data={resumenDiario.menuItemSales} layout="vertical" margin={{ left: 100 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis type="number" />
-                                <YAxis dataKey="item" type="category" />
+                                {/* Aquí ajustamos el uso de defaultProps con parámetros por defecto */}
+                                <YAxis type="category" dataKey="item"
+                                    //@ts-ignore
+                                    tick={{ angle: 0 }}
+                                />
                                 <Tooltip />
                                 <Legend />
                                 <Bar dataKey="cantVendida" fill="#82ca9d" name="Cantidad Vendida" />

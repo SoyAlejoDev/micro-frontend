@@ -10,6 +10,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { AdminStepper } from './adminStep/AdminStepper';
 import { MenuAdmin } from './adminStep/MenuAdmin';
 import { ResumenDiario } from './resumenDiario/ResumenDiario';
+import { ResumenMensual } from './resumenDiario/ResumenMensual';
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,7 +28,7 @@ export const AdminDashboard = () => {
             case '1':
                 return <ResumenDiario />;
             case '2':
-                return <div>Content for nav 2</div>;
+                return <ResumenMensual />;
             case '3':
                 return <AdminStepper />;
             case '4':
