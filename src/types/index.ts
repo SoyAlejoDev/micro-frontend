@@ -56,7 +56,7 @@ export interface Items {
 }
 
 export interface OrderItem {
-	id: number;
+	id: string;
 	nombre: string;
 	cantidad: number;
 	precio: number;

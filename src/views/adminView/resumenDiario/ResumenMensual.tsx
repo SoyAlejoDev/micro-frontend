@@ -32,46 +32,10 @@ import {
     Tooltip,
     XAxis, YAxis
 } from 'recharts';
+import { getDailySummary, monthlyData } from './monthlyData';
 
 // Mock data for the monthly summary
-const monthlyData = {
-    totalRevenue: 158250.75,
-    totalOrders: 2610,
-    averageOrderValue: 60.63,
-    topSellingItems: [
-        { name: 'Pollo a la parrilla', quantity: 750, revenue: 24750 },
-        { name: 'Pasta Alfredo', quantity: 600, revenue: 12000 },
-        { name: 'Ensalada César', quantity: 450, revenue: 6750 },
-        { name: 'Filete de salmón', quantity: 540, revenue: 16200 },
-        { name: 'Hamburguesa clásica', quantity: 660, revenue: 9900 }
-    ],
-    dailyRevenue: [
-        { date: '2024-09-01', revenue: 5250.75 },
-        { date: '2024-09-02', revenue: 4800.50 },
-        { date: '2024-09-03', revenue: 5500.25 },
-        // ... more daily data
-    ],
-    categoryBreakdown: [
-        { name: 'Platos principales', value: 98000 },
-        { name: 'Entradas', value: 25000 },
-        { name: 'Postres', value: 15250 },
-        { name: 'Bebidas', value: 20000 }
-    ]
-};
 
-// Mock data for individual day summary
-const getDailySummary = (date: any) => ({
-    date: date,
-    totalRevenue: 5250.75 + (Math.random() * 1000),
-    totalOrders: 87 + Math.floor(Math.random() * 20),
-    menuItemSales: [
-        { item: 'Pollo a la parrilla', quantity: 25, revenue: 825.00 },
-        { item: 'Ensalada César', quantity: 15, revenue: 225.00 },
-        { item: 'Pasta Alfredo', quantity: 20, revenue: 400.00 },
-        { item: 'Sopa del día', quantity: 30, revenue: 300.00 },
-        { item: 'Filete de salmón', quantity: 18, revenue: 540.00 }
-    ]
-});
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 

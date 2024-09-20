@@ -1,7 +1,7 @@
 import { Add, Remove } from "@mui/icons-material";
 import { IconButton, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSocketStore } from "../../../store/useSocketStore";
+import { createOrder } from "../../../helpers/createOrder";
 import { Items } from "../../../types";
 
 interface Props {
@@ -11,9 +11,7 @@ interface Props {
 }
 
 export const CardMesero = ({ data, selectedMenu, tableId }: Props) => {
-    const getOrderForTable = useSocketStore((state) => state.getOrderForTable);
-    const addToOrder = useSocketStore((state) => state.addToOrder);
-    const removeFromOrder = useSocketStore((state) => state.removeFromOrder);
+    const { getOrderForTable, addToOrder, removeFromOrder } = createOrder();
 
     // Inicializa el estado count con la cantidad almacenada en zustand, si existe
     const [count, setCount] = useState(() => {

@@ -1,11 +1,12 @@
 import { Container, Divider, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { OrdenCard } from '../../components/orden/OrdenCard';
+import { createOrder } from '../../helpers/createOrder';
 import { useSocketStore } from '../../store/useSocketStore';
 import { Orden } from '../../types';
-import { OrdenCard } from '../../components/orden/OrdenCard';
-import { RenderContent } from './RenderContent';
 import { FabSaveOrBack } from '../../ui/FabSaveOrBack';
+import { RenderContent } from './RenderContent';
 
 
 export const MeseroContainer = () => {
@@ -13,8 +14,10 @@ export const MeseroContainer = () => {
   const [selectedMenu, setSelectedMenu] = useState<string>("Entrantes");
   const [orderTable, setorderTable] = useState<Orden>();
   const navigate = useNavigate();
-  const { online, ordersByTable, socketData } = useSocketStore();
+  const { online, socketData } = useSocketStore();
   const { pathname } = useLocation();
+
+  const { ordersByTable } = createOrder();
 
 
   const tableId = pathname.split('/').slice(2).join('/');
