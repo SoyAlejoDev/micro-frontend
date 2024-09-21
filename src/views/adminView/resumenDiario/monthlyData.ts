@@ -1,15 +1,60 @@
-// mock-restaurant-data.js
+// monthlyData.ts
 
 export const monthlyData = {
 	totalRevenue: 158250.75,
 	totalOrders: 2610,
 	averageOrderValue: 60.63,
-	topSellingItems: [
-		{name: "Pollo a la parrilla", quantity: 750, revenue: 24750},
-		{name: "Pasta Alfredo", quantity: 600, revenue: 12000},
-		{name: "Ensalada César", quantity: 450, revenue: 6750},
-		{name: "Filete de salmón", quantity: 540, revenue: 16200},
-		{name: "Hamburguesa clásica", quantity: 660, revenue: 9900},
+	menuOptions: [
+		{
+			name: "Pizza",
+			quantity: 750,
+			revenue: 15000,
+			sections: [
+				{name: "Margarita", quantity: 300, revenue: 5400},
+				{name: "Pepperoni", quantity: 250, revenue: 5000},
+				{name: "Hawaiana", quantity: 200, revenue: 4600},
+			],
+		},
+		{
+			name: "Hamburguesa",
+			quantity: 600,
+			revenue: 9000,
+			sections: [
+				{name: "Clásica", quantity: 250, revenue: 3250},
+				{name: "Con queso", quantity: 200, revenue: 3000},
+				{name: "Vegetariana", quantity: 150, revenue: 2750},
+			],
+		},
+		{
+			name: "Ensalada",
+			quantity: 450,
+			revenue: 5625,
+			sections: [
+				{name: "César", quantity: 200, revenue: 2600},
+				{name: "Griega", quantity: 150, revenue: 1875},
+				{name: "Mixta", quantity: 100, revenue: 1150},
+			],
+		},
+		{
+			name: "Pasta",
+			quantity: 500,
+			revenue: 7500,
+			sections: [
+				{name: "Carbonara", quantity: 200, revenue: 3000},
+				{name: "Bolognesa", quantity: 180, revenue: 2700},
+				{name: "Alfredo", quantity: 120, revenue: 1800},
+			],
+		},
+		{
+			name: "Bebidas",
+			quantity: 1000,
+			revenue: 3000,
+			sections: [
+				{name: "Refresco", quantity: 500, revenue: 1250},
+				{name: "Agua", quantity: 300, revenue: 600},
+				{name: "Cerveza", quantity: 200, revenue: 1150},
+			],
+		},
 	],
 	dailyRevenue: [
 		{date: "2024-09-01", revenue: 5250.75},
@@ -27,25 +72,5 @@ export const monthlyData = {
 		{date: "2024-09-13", revenue: 5550.25},
 		{date: "2024-09-14", revenue: 5750.5},
 		{date: "2024-09-15", revenue: 5050.75},
-		// ... puedes agregar más días aquí si lo deseas
-	],
-	categoryBreakdown: [
-		{name: "Platos principales", value: 98000},
-		{name: "Entradas", value: 25000},
-		{name: "Postres", value: 15250},
-		{name: "Bebidas", value: 20000},
 	],
 };
-
-export const getDailySummary = (date: any) => ({
-	date: date,
-	totalRevenue: 5250.75 + Math.random() * 1000,
-	totalOrders: 87 + Math.floor(Math.random() * 20),
-	menuItemSales: [
-		{item: "Pollo a la parrilla", quantity: 25, revenue: 825.0},
-		{item: "Ensalada César", quantity: 15, revenue: 225.0},
-		{item: "Pasta Alfredo", quantity: 20, revenue: 400.0},
-		{item: "Sopa del día", quantity: 30, revenue: 300.0},
-		{item: "Filete de salmón", quantity: 18, revenue: 540.0},
-	],
-});

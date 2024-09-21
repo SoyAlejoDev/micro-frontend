@@ -130,3 +130,19 @@ export interface FooterFormInputs {
 export interface DescriptionFormInputs {
 	items: {logo: string | null; item: string; text: string}[];
 }
+
+export interface IResumenDiario {
+	date: string;
+	totalingreso: string;
+	totalOrders: string;
+	menuItems: {
+		category: string;
+		totalVendido: number;
+		totalIngreso: number;
+		items: {
+			name: string;
+			cantVendida: number;
+			ingreso: number;
+		}[];
+	}[];
+}

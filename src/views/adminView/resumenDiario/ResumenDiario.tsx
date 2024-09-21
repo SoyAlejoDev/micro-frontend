@@ -1,207 +1,223 @@
-import {
-    CurrencyExchange,
-    GetApp,
-    Restaurant,
-    ShoppingCart
-} from '@mui/icons-material';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Grid,
-    Paper,
-    Typography
-} from '@mui/material';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import React from 'react';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import React, { useState } from 'react';
+import { AddShoppingCart, AttachMoney, GetApp, ListAlt } from '@mui/icons-material';
+import { Box, Button, Typography, useTheme, Paper, Grid } from '@mui/material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { generatePDF } from '../../../helpers/generatePdfDiario';
+import { ResumeCard } from '../analisis/ResumeCard';
 
-// Asegúrate de que jspdf-autotable está correctamente tipado
-declare module 'jspdf' {
-    interface jsPDF {
-        autoTable: (options: any) => jsPDF;
-    }
-}
-
-// Interfaz para nuestros datos de ventas
-interface SalesSummary {
-    date: string;
-    totalingreso: number;
-    totalOrders: number;
-    menuItemSales: {
-        item: string;
-        cantVendida: number;
-        ingreso: number;
-    }[];
-}
-
-// Datos mockeados
-const resumenDiario: SalesSummary = {
+const resumenDiario = {
     date: '2024-09-18',
-    totalingreso: 5250.75,
-    totalOrders: 87,
-    menuItemSales: [
-        { item: 'Pollo a la parrilla', cantVendida: 25, ingreso: 825.00 },
-        { item: 'Ensalada César', cantVendida: 15, ingreso: 225.00 },
-        { item: 'Pasta Alfredo', cantVendida: 20, ingreso: 400.00 },
-        { item: 'Sopa del día', cantVendida: 30, ingreso: 300.00 },
-        { item: 'Filete de salmón', cantVendida: 18, ingreso: 540.00 },
-        { item: 'Hamburguesa clásica', cantVendida: 22, ingreso: 330.00 },
-        { item: 'Tarta de manzana', cantVendida: 12, ingreso: 72.00 },
+    totalingreso: '12750.50',
+    totalOrders: '215',
+    menuItems: [
+        {
+            category: 'Pizzas',
+            totalVendido: 85,
+            totalIngreso: 2125,
+            items: [
+                { name: 'Pizza Margarita', cantVendida: 30, ingreso: 600 },
+                { name: 'Pizza Pepperoni', cantVendida: 25, ingreso: 625 },
+                { name: 'Pizza Hawaiana', cantVendida: 15, ingreso: 450 },
+                { name: 'Pizza Vegetariana', cantVendida: 15, ingreso: 450 }
+            ]
+        },
+        {
+            category: 'Pastas',
+            totalVendido: 60,
+            totalIngreso: 1500,
+            items: [
+                { name: 'Espagueti a la Bolognesa', cantVendida: 20, ingreso: 500 },
+                { name: 'Lasaña', cantVendida: 15, ingreso: 450 },
+                { name: 'Fettuccine Alfredo', cantVendida: 15, ingreso: 375 },
+                { name: 'Ravioles de Queso', cantVendida: 10, ingreso: 175 }
+            ]
+        },
+        {
+            category: 'Ensaladas',
+            totalVendido: 45,
+            totalIngreso: 900,
+            items: [
+                { name: 'Ensalada César', cantVendida: 20, ingreso: 400 },
+                { name: 'Ensalada Griega', cantVendida: 15, ingreso: 300 },
+                { name: 'Ensalada de la Casa', cantVendida: 10, ingreso: 200 }
+            ]
+        },
+        {
+            category: 'Bebidas',
+            totalVendido: 150,
+            totalIngreso: 600,
+            items: [
+                { name: 'Refresco', cantVendida: 60, ingreso: 180 },
+                { name: 'Agua Mineral', cantVendida: 40, ingreso: 80 },
+                { name: 'Cerveza', cantVendida: 30, ingreso: 210 },
+                { name: 'Vino (Copa)', cantVendida: 20, ingreso: 130 }
+            ]
+        },
+        {
+            category: 'Postres',
+            totalVendido: 70,
+            totalIngreso: 875,
+            items: [
+                { name: 'Tiramisú', cantVendida: 25, ingreso: 375 },
+                { name: 'Cheesecake', cantVendida: 20, ingreso: 300 },
+                { name: 'Helado', cantVendida: 15, ingreso: 120 },
+                { name: 'Brownie', cantVendida: 10, ingreso: 80 }
+            ]
+        },
+        {
+            category: 'Entrantes',
+            totalVendido: 95,
+            totalIngreso: 1425,
+            items: [
+                { name: 'Palitos de Mozzarella', cantVendida: 30, ingreso: 450 },
+                { name: 'Alitas de Pollo', cantVendida: 25, ingreso: 375 },
+                { name: 'Bruschetta', cantVendida: 20, ingreso: 300 },
+                { name: 'Nachos con Queso', cantVendida: 20, ingreso: 300 }
+            ]
+        },
+        {
+            category: 'Platos Principales',
+            totalVendido: 55,
+            totalIngreso: 1925,
+            items: [
+                { name: 'Filete de Res', cantVendida: 15, ingreso: 675 },
+                { name: 'Pollo a la Parrilla', cantVendida: 20, ingreso: 600 },
+                { name: 'Salmón a la Plancha', cantVendida: 10, ingreso: 400 },
+                { name: 'Risotto de Champiñones', cantVendida: 10, ingreso: 250 }
+            ]
+        }
     ]
 };
 
-export const ResumenDiario: React.FC = () => {
-    const generatePDF = () => {
-        const doc = new jsPDF();
+export const ResumenDiario = () => {
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const theme = useTheme();
 
-        // Título
-        doc.setFontSize(18);
-        doc.text('Resumen Diario de Ventas', 14, 20);
-        doc.setFontSize(12);
-        doc.text(`Fecha: ${new Date(resumenDiario.date).toLocaleDateString()}`, 14, 30);
-
-        // Resumen general
-        doc.setFontSize(14);
-        doc.text('Resumen General', 14, 40);
-        doc.setFontSize(12);
-        doc.text(`Total Facturado: $${resumenDiario.totalingreso.toFixed(2)}`, 14, 50);
-        doc.text(`Número de Órdenes: ${resumenDiario.totalOrders}`, 14, 60);
-
-        // Tabla de ventas por plato
-        doc.setFontSize(14);
-        doc.text('Ventas por Plato', 14, 90);
-
-        const tableColumn = ["Plato", "Cantidad Vendida", "Ingreso ($)"];
-        const tableRows = resumenDiario.menuItemSales.map(item => [
-            item.item,
-            item.cantVendida,
-            `$${item.ingreso.toFixed(2)}`
-        ]);
-
-        doc.autoTable({
-            startY: 100,
-            head: [tableColumn],
-            body: tableRows,
-        });
-
-        // Guardar el PDF
-        doc.save(`ResumenDiarioVentas -${new Date(resumenDiario.date).toLocaleDateString()}.pdf`);
+    const handleCategoryClick = (category: string) => {
+        setSelectedCategory(category);
     };
 
+    const mainChartData = resumenDiario.menuItems;
+    const detailChartData = selectedCategory ? resumenDiario.menuItems.find(item => item.category === selectedCategory)?.items : [];
+
     return (
-        <Box sx={{ flexGrow: 1, p: 3 }}>
-            <Grid container spacing={3} alignItems="center" marginBottom={3}>
-                <Grid item xs>
-                    <Typography variant="h4">
-                        Resumen Diario de Ventas - {new Date(resumenDiario.date).toLocaleDateString()}
-                    </Typography>
-                </Grid>
-                <Grid item>
-                    <Button
-                        variant="contained"
-                        startIcon={<GetApp />}
-                        onClick={generatePDF}
-                    >
-                        Descargar PDF
-                    </Button>
-                </Grid>
-            </Grid>
+        <Box sx={{ flexGrow: 1, px: 3, backgroundColor: '#f5faff', height: '100%', width: '100%' }}>
 
-            <Grid container spacing={3}>
-                {/* Total Facturado */}
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" gutterBottom>
-                                Total Facturado
-                            </Typography>
-                            <Box display="flex" alignItems="center">
-                                <CurrencyExchange sx={{ marginRight: '10px' }} />
-                                <Typography variant="h5" component="div">
-                                    ${resumenDiario.totalingreso.toFixed(2)}
+
+            <Box sx={{ display: 'flex', gap: 3 }}>
+                {/* Main content - 2/3 width */}
+                <Box sx={{ flex: '0 0 75%' }}>
+                    <Grid container spacing={2} sx={{ mb: 3 }}>
+                        <Grid item xs={12} sm={4}>
+                            <ResumeCard
+                                color="#1976d2"
+                                label="Ventas Totales"
+                                total={resumenDiario.totalingreso}
+                                Icon={AttachMoney}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <ResumeCard
+                                color="#388e3c"
+                                label="Número de Órdenes"
+                                total={resumenDiario.totalOrders}
+                                Icon={ListAlt}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <ResumeCard
+                                color="#ebc840"
+                                label="Categoría más Vendida"
+                                masVendido={resumenDiario.menuItems.reduce((a, b) => a.totalVendido > b.totalVendido ? a : b).category}
+                                Icon={AddShoppingCart}
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                            <Paper elevation={3} sx={{ p: 2, height: '400px' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Resumen por Categoría
                                 </Typography>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                                <ResponsiveContainer width="100%" height="90%">
+                                    <BarChart
+                                        data={mainChartData}
+                                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="category" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar
+                                            dataKey="totalVendido"
+                                            fill="#ed1c1c"
+                                            onClick={(data) => handleCategoryClick(data.category)}
+                                            name="Cantidad Vendida"
+                                        />
+                                        <Bar
+                                            dataKey="totalIngreso"
+                                            fill="#f5840b"
+                                            onClick={(data) => handleCategoryClick(data.category)}
+                                            name="Ingreso Total ($)"
+                                        />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Paper>
+                        </Grid>
 
-                {/* Número de Órdenes */}
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" gutterBottom>
-                                Número de Órdenes
-                            </Typography>
-                            <Box display="flex" alignItems="center">
-                                <ShoppingCart sx={{ marginRight: '10px' }} />
-                                <Typography variant="h5" component="div">
-                                    {resumenDiario.totalOrders}
+                        <Grid item xs={12} md={6}>
+                            <Paper elevation={3} sx={{ p: 2, height: '400px' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    {selectedCategory ? `Desglose de ${selectedCategory}` : 'Seleccione una categoría'}
                                 </Typography>
+                                {selectedCategory ? (
+                                    <ResponsiveContainer width="100%" height="90%">
+                                        <BarChart
+                                            data={detailChartData}
+                                            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                        >
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="name" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Legend />
+                                            <Bar dataKey="cantVendida" fill="#0d4a80ff" name="Cantidad Vendida" />
+                                            <Bar dataKey="ingreso" fill="#49c2ecff" name="Ingreso" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90%' }}>
+                                        <Typography variant="body1">Haga clic en una categoría para ver detalles</Typography>
+                                    </Box>
+                                )}
+                            </Paper>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', m: 2 }}>
+                                <Button
+                                    variant="text"
+                                    startIcon={<GetApp />}
+                                    color='success'
+                                    sx={{ backgroundColor: 'white' }}
+                                    onClick={() => generatePDF(resumenDiario)}
+                                >
+                                    Descargar PDF
+                                </Button>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                        </Grid>
+                    </Grid>
+                </Box>
 
-                {/* Plato Más Vendido */}
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" gutterBottom>
-                                Plato Más Vendido
-                            </Typography>
-                            <Box display="flex" alignItems="center">
-                                <Restaurant sx={{ marginRight: '10px' }} />
-                                <Typography variant="h5" component="div">
-                                    {resumenDiario.menuItemSales.reduce((prev, current) =>
-                                        (prev.cantVendida > current.cantVendida) ? prev : current
-                                    ).item}
-                                </Typography>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                {/* Gráfico de Ventas por Plato */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2 }}>
+                {/* Historial - 1/3 width */}
+                <Box sx={{ flex: '1' }}>
+                    <Paper elevation={3} sx={{ p: 2, height: 'calc(100vh - 140px)', overflowY: 'auto' }}>
                         <Typography variant="h6" gutterBottom>
-                            Ventas por Plato
+                            Historial
                         </Typography>
-                        <ResponsiveContainer width="100%" height={400}>
-                            <BarChart data={resumenDiario.menuItemSales} layout="vertical" margin={{ left: 100 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis type="number" />
-                                {/* Aquí ajustamos el uso de defaultProps con parámetros por defecto */}
-                                <YAxis type="category" dataKey="item"
-                                    //@ts-ignore
-                                    tick={{ angle: 0 }}
-                                />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="cantVendida" fill="#82ca9d" name="Cantidad Vendida" />
-                                <Bar dataKey="ingreso" fill="#8884d8" name="Ingresos ($)" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {/* Aquí puedes agregar el contenido del historial */}
                     </Paper>
-                </Grid>
-
-                {/* Historial de Ventas */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Historial de Ventas
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            El historial detallado de ventas se implementará en futuras actualizaciones.
-                            Aquí se mostrará un registro completo de las transacciones del día,
-                            incluyendo horas pico, tendencias de ventas y más.
-                        </Typography>
-                    </Paper>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
         </Box>
     );
 };
