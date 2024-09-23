@@ -1,4 +1,6 @@
-import { Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grow } from '@mui/material';
+import { useInView } from 'react-intersection-observer';
 import { Characteristic } from '../../../types';
 
 interface Props {
@@ -6,24 +8,56 @@ interface Props {
 }
 
 export const Characteristics_Items = ({ characteristics }: Props) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const { ref, inView } = useInView({
+        threshold: 0.1,
+        triggerOnce: false,
+    });
+
+    useEffect(() => {
+        if (inView) {
+            setIsVisible(true);
+        } else {
+            setIsVisible(false);
+        }
+    }, [inView]);
+
     return (
-
-
-        <div className='flex flex-col items-center mt-14 mx-2 mb-10'>
-            <div className=" relative bg-white shadow-lg flex items-center  flex-col hover:bg-blue-600 hover:text-white ">
-                <div className="absolute -top-10">
-                    <img className=" h-24 w-24 rounded-full object-cover " src={characteristics.logo} alt="" />
-                </div>
-                <Paper elevation={3} className='md:h-[200px]'>
-                    <div className="mt-16 flex items-center flex-col justify-center">
-                        <p className="font-semibold text-xl text-gray-500">{characteristics.item}</p>
-                        <p className="text-center mb-5 mx-2">{characteristics.text}</p>
+        <div ref={ref} className='w-full md:w-auto md:mt-14 md:mx-2'>
+            <Grow
+                in={isVisible}
+                timeout={1000}
+                style={{ transformOrigin: '0 0 0' }}
+            >
+                <div className="relative w-full h-[400px] md:h-auto md:aspect-square overflow-hidden">
+                    <img
+                        className="absolute inset-0 w-full h-full object-cover"
+                        src={characteristics.logo}
+                        alt=""
+                    />
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                    <div className="absolute inset-0 flex flex-col justify-center items-center p-4">
+                        <div className='bg-white bg-opacity-5 p-2 rounded'>
+                            <span
+                                className="text-[80px] md:text-2xl font-bold bg-clip-text text-transparent leading-none"
+                                style={{
+                                    backgroundImage: `url(${characteristics.logo})`,
+                                    backgroundClip: 'text',
+                                    WebkitBackgroundClip: 'text',
+                                    backgroundPosition: 'center',
+                                    backgroundSize: 'cover',
+                                    WebkitTextStroke: '1px rgba(255,255,255,0.3)'
+                                }}
+                            >
+                                {characteristics.item}
+                            </span>
+                        </div>
+                        <p className="text-white text-center md:text-gray-600 mt-4 text-lg md:text-base">
+                            {characteristics.text}
+                        </p>
                     </div>
-
-                </Paper>
-
-            </div>
+                </div>
+            </Grow>
         </div>
-
     );
 };

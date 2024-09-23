@@ -52,7 +52,7 @@ export const ResumenMensual = () => {
                 </Grid>
                 <Grid item xs={12} sm={4}>
                     <ResumeCard
-                        color="#ebc840"
+                        color="#5e35b1"
                         label="Opción Más Vendida"
                         masVendido={monthlyData.menuOptions.reduce((max, option) => max.quantity > option.quantity ? max : option).name}
                         Icon={Restaurant}

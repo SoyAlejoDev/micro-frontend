@@ -8,7 +8,7 @@ interface Props {
 
 export const Characteristics = ({ socketData }: Props) => {
   return (
-    <div className='md:flex md:items-center md:justify-around md:h-[60vh] py-5 bg-yellow-300'>
+    <div className='md:flex md:items-center md:justify-around md:h-[60vh]'>
 
       {
         socketData?.characteristics.map((item, index) => (

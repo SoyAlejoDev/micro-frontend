@@ -126,7 +126,7 @@ export const ResumenDiario = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <ResumeCard
-                                color="#ebc840"
+                                color="#5e35b1"
                                 label="Categoría más Vendida"
                                 masVendido={resumenDiario.menuItems.reduce((a, b) => a.totalVendido > b.totalVendido ? a : b).category}
                                 Icon={AddShoppingCart}
